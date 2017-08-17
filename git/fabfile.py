@@ -7,12 +7,13 @@ import os.path
 import sys
 
 #VARIABILE
-cale = '/home/marius'
+cale = '/home/marius/fab'
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
 #comanda="|& tee -a  /home/marius/git/test.txt"
-logFile="/home/marius/git/test.txt"
+logFile="/home/marius/fab/git/logFile.txt"
+script = '/home/marius'
 
 
 #TESTE
@@ -73,7 +74,7 @@ def gitPull():
 def gitCheckout():
 	with settings(warn_only=True):
 		with cd("%s/git/fab/git" % cale):
-			checkout = sudo("git checkout fab2")
+			checkout = sudo("git checkout fabBranch")
 			if checkout.return_code == 0:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
 				#sudo("tree %s" % comanda)
@@ -85,7 +86,7 @@ def gitCheckout():
 
 def apelare():
 	with settings(warn_only=True):
-		apelare = sudo("%s/Practica/shellScript.sh" % cale)
+		apelare = sudo("%s/Practica/shellScript.sh" % script)
 		if apelare.return_code == 0:
 			sudo("echo '%s' >> %s" % (apelare,logFile))
 		else:
