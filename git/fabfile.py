@@ -45,7 +45,6 @@ def gitPull():
 
 
 #FUNCTIONS
-
 def checkMailCommand():
 	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
 	if mailCommand == "Not Found":
