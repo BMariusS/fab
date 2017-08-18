@@ -42,9 +42,15 @@ def gitPull():
 '''
 
 
+
+
 #FUNCTIONS
 
 def sendMail():
+	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
+	if mailCommand == "Not Found":
+		print "Command mail does not exist"
+		raise SystemExit()
 	if os.path.exists("%s" % mailFile):
 		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
 		try:
