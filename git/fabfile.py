@@ -13,7 +13,7 @@ mailFile="/home/marius/fab/git/mails.txt"
 script = "/home/marius"
 
 
-#TESTS
+'''#TESTS
 def gitCloneTest():
 	with settings(warn_only=True):
 		with cd("%s/git" % path):
@@ -39,13 +39,17 @@ def gitPull():
 				sudo("echo '%s' >> %s" % (pull,logFile))
 				print "Error at pull"
 				raise SystemExit()
+'''
+
+
+#FUNCTIONS
 
 def sendMail():
 	if os.path.exists("%s" % mailFile):
 		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
 		try:
 			if os.path.exists("%s" % logFile):
-				sudo("echo 'Test' | mail -s 'SubjectTest' %s -A %s" % (mails,logFile))
+				sudo("echo 'There was an error with the program' | mail -s 'Error' %s -A %s" % (mails,logFile))
 			else:
 				print "Error attaching file"
 		except:
@@ -53,7 +57,8 @@ def sendMail():
 	else:
 		print "Mail file doesn't exist"
 
-#FUNCTIONS
+
+
 def connection():
 	try:
 		run("hostname")
@@ -76,6 +81,7 @@ def gitClone():
 				sudo("echo '%s' > %s" % (clone,logFile))
 			else:
 				sudo("echo '%s' > %s" % (clone,logFile))
+				sendMail()
 				print "Error at cloning"
 				raise SystemExit()
 
@@ -89,6 +95,7 @@ def gitCheckout(branch):
 				#sudo("tree %s" % comanda)
 			else:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
+				sendMail()
 				print "Error at checkout"
 				raise SystemExit()
 
@@ -100,6 +107,7 @@ def scriptCall():
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
 		else:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			sendMail()
 			print "Error at calling the script"
 			raise SystemExit()
 
@@ -107,6 +115,7 @@ def displayLog():
 	try:
 		sudo("cat %s/git/logFile.txt" % path)
 	except:
+		sendMail()
 		abort("Error at displaying logFile")
 
 @parallel
