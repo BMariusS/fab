@@ -90,12 +90,12 @@ def connection():
 def gitClone():
 	if os.path.exists("%s" % clonePath):
 		sudo("echo 'Clone already exists' > %s" % logFile)
-		sudo("rm -rf %s/git/fab | echo 'Clone has been deleted' > %s" % (path,logFile))
+		sudo("rm -rf %s | echo 'Clone has been deleted' > %s" % (clonePath,logFile))
 	#else:	
 		#with cd("%s/git" % cale):
 			#sudo("git clone https://github.com/BMariusS/fab.git %s" % comanda)
 	with settings(warn_only=True):
-		with cd("%s/git" % path):
+		with cd("%s" % clonePath):
 			clone = sudo("git clone https://github.com/BMariusS/fab.git")
 			if clone.return_code == 0:
 				sudo("echo '%s' > %s" % (clone,logFile))
