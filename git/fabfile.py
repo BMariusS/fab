@@ -46,11 +46,25 @@ def gitPull():
 
 #FUNCTIONS
 
-def sendMail():
+def checkMailCommand():
 	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
 	if mailCommand == "Not Found":
 		print "Command mail does not exist"
 		raise SystemExit()
+	
+	
+def sendMailSuccess():
+	checkMailCommand()
+	if os.path.exists("%s" % mailFile):
+		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
+		sudo("echo 'All steps from the script were executed with success' | mail -s 'Success' %s" % mails)
+	else:
+		print "Mail file doesn't exist"
+
+
+
+def sendMailError():
+	checkMailCommand()
 	if os.path.exists("%s" % mailFile):
 		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
 		try:
@@ -87,7 +101,7 @@ def gitClone():
 				sudo("echo '%s' > %s" % (clone,logFile))
 			else:
 				sudo("echo '%s' > %s" % (clone,logFile))
-				sendMail()
+				sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
 
@@ -101,7 +115,7 @@ def gitCheckout(branch):
 				#sudo("tree %s" % comanda)
 			else:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
-				sendMail()
+				sendMailError()
 				print "Error at checkout"
 				raise SystemExit()
 
@@ -111,9 +125,10 @@ def scriptCall():
 		scriptCall = sudo("%s/Practica/shellScript.sh" % script)
 		if scriptCall.return_code == 0:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			sendMailSuccess()
 		else:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
-			sendMail()
+			sendMailError()
 			print "Error at calling the script"
 			raise SystemExit()
 
@@ -121,7 +136,7 @@ def displayLog():
 	try:
 		sudo("cat %s/git/logFile.txt" % path)
 	except:
-		sendMail()
+		sendMailError()
 		abort("Error at displaying logFile")
 
 @parallel
