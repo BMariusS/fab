@@ -2,6 +2,8 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
+import smtplib
+import base64
 #import sys
 
 #VARIABILES
@@ -39,7 +41,23 @@ def gitPull():
 				sudo("echo '%s' >> %s" % (pull,logFile))
 				print "Error at pull"
 				raise SystemExit()
-		
+
+
+#echo "Test" | mail -s "SubjectTest" masbrgh@gmail.com -A /home/marius/fab/git/logFile.txt
+# cat mails.txt | tr '\n' ','
+
+def sendMail():
+	if os.path.exists("/home/marius/fab/git/mails.txt"):
+		testFile = sudo("cat /home/marius/fab/git/mails.txt | tr '\n' ',' ")
+		try:
+			if os.path.exists("/home/marius/fab/git/logFile.txt"):
+				sudo("echo 'Test' | mail -s 'SubjectTest' %s -A /home/marius/fab/git/logFile.txt" % testFile)
+			else:
+				print "Error attaching file"
+		except:
+			print "Error sending mail"
+	else:
+		print "Mail file doesn't exist"
 
 #FUNCTIONS
 def connection():
