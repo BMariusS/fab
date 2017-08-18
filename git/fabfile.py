@@ -5,6 +5,7 @@ import os.path
 
 #VARIABILES
 path = '/home/marius/fab'
+clonePath = '/home/marius'
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
@@ -87,7 +88,7 @@ def connection():
 
 
 def gitClone():
-	if os.path.exists("%s/git/fab" % path):
+	if os.path.exists("%s" % clonePath):
 		sudo("echo 'Clone already exists' > %s" % logFile)
 		sudo("rm -rf %s/git/fab | echo 'Clone has been deleted' > %s" % (path,logFile))
 	#else:	
