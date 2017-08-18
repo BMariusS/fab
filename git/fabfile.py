@@ -2,9 +2,6 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
-import smtplib
-import base64
-#import sys
 
 #VARIABILES
 path = '/home/marius/fab'
@@ -12,6 +9,7 @@ env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
 logFile="/home/marius/fab/git/logFile.txt"
+mailFile="/home/marius/fab/git/mails.txt"
 script = "/home/marius"
 
 
@@ -42,16 +40,12 @@ def gitPull():
 				print "Error at pull"
 				raise SystemExit()
 
-
-#echo "Test" | mail -s "SubjectTest" masbrgh@gmail.com -A /home/marius/fab/git/logFile.txt
-# cat mails.txt | tr '\n' ','
-
 def sendMail():
-	if os.path.exists("/home/marius/fab/git/mails.txt"):
-		testFile = sudo("cat /home/marius/fab/git/mails.txt | tr '\n' ',' ")
+	if os.path.exists("%s" % mailFile):
+		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
 		try:
-			if os.path.exists("/home/marius/fab/git/logFile.txt"):
-				sudo("echo 'Test' | mail -s 'SubjectTest' %s -A /home/marius/fab/git/logFile.txt" % testFile)
+			if os.path.exists("%s" % logFile):
+				sudo("echo 'Test' | mail -s 'SubjectTest' %s -A %s" % (mails,logFile))
 			else:
 				print "Error attaching file"
 		except:
