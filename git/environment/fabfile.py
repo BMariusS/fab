@@ -1,4 +1,4 @@
-from fabric.api import *
+rom fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
 import os
@@ -21,4 +21,4 @@ def fileCreation():
 		sudo("echo -e '%s \n%s \n%s \n%s\n' >> /home/marius/script/fab/git/environment/logFile.txt" % (timeStamp, build, sdk, source))
 	except:
 		print "Error at creating timestamps"
-		raise SystemExit()
+raise SystemExit()
