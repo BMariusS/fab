@@ -8,8 +8,8 @@ path = '/home/marius/fab/'
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
-logFile="/home/marius/script/fab/git/logFile.txt"
-mailFile="/home/marius/script/fab/git/mails.txt"
+logFile="/home/marius/fab/fab/git/logFile.txt"
+mailFile="/home/marius/fab/fab/git/mails.txt"
 script = "/home/marius"
 
 
