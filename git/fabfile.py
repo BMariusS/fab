@@ -11,46 +11,15 @@ env.password="rootTest"
 logFile="/home/marius/script/fab/git/logFile.txt"
 mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
- 
- 
-'''#TESTS
- def gitCloneTest():
- 	with settings(warn_only=True):
- 		with cd("%s/git" % path):
- 			clone = sudo("git clone https://github.com/BMariusS/fab.git")
- 			if clone.return_code == 0:
- 				sudo("echo '%s' > /home/marius/git/test.txt" % clone)
- 			else:
- 				sudo("echo '%s' > /home/marius/git/test.txt" % clone)
- 				print "Error at clonning"
- 				raise SystemExit()
- 				#abort("eroare la clonare")
- 
- 
- def gitPull():
- 	with settings(warn_only=True):
- 		with cd("%s/git" % path):
- 			#if run("git pull %s" % comanda).failed:
- 				#sudo("git pull %s" % comanda)
- 			pull = sudo("git pull")
- 			if pull.return_code == 0:
- 				sudo("echo '%s' >> %s" % (pull,logFile))
- 			else:
- 				sudo("echo '%s' >> %s" % (pull,logFile))
- 				print "Error at pull"
- 				raise SystemExit()
-'''
- 
- 
- 
- 
+
+
 #FUNCTIONS
 def checkMailCommand():
 	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
 	if mailCommand == "Not Found":
 		print "Command mail does not exist"
 		raise SystemExit()
- 	
+
  	
 def sendMailSuccess():
 	checkMailCommand()
@@ -60,8 +29,8 @@ def sendMailSuccess():
 	else:
 		print "Mail file doesn't exist"
 
- 
- 
+
+
 def sendMailError():
 	checkMailCommand()
 	if os.path.exists("%s" % mailFile):
@@ -76,8 +45,8 @@ def sendMailError():
 	else:
 		print "Mail file doesn't exist"
 
- 
- 
+
+
 def connection():
 	try:
 		run("hostname")
@@ -85,9 +54,9 @@ def connection():
 		abort("Connection failed")
 
 
- 
+
 def gitClone(folder):
-	if os.path.exists("%s/%s/" % (path,folder)):
+	if os.path.exists("%s%s/" % (path,folder)):
 		sudo("echo 'Clone already exists' > %s" % logFile)
 		with cd("%s" % path):
 			sudo("rm -rf %s | echo 'Clone has been deleted' > %s" % (folder,logFile))
@@ -108,7 +77,7 @@ def gitClone(folder):
  
 def gitCheckout(branch):
 	with settings(warn_only=True):
-		with cd("%s/git" % path):
+		with cd("%s/fab/git" % path):
 			checkout = sudo("git checkout %s" % branch)
 			if checkout.return_code == 0:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
@@ -134,16 +103,16 @@ def scriptCall():
 
 def displayLog():
 	try:
-		sudo("cat %s/git/logFile.txt" % path)
+		sudo("cat %s" % logFile)
 	except:
 		sendMailError()
 		abort("Error at displaying logFile")
 
 @parallel
-def final(parameter='master'):
+def final(cloneParameter,checkoutParameter='master'):
 	connection()
-	gitClone()
-	gitCheckout(parameter)
+	gitClone(cloneParameter)
+	gitCheckout(checkoutParameter)
 	scriptCall()
 	displayLog()
 	disconnect_all()
