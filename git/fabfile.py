@@ -115,4 +115,5 @@ def final(cloneParameter,checkoutParameter='master'):
 	gitCheckout(checkoutParameter)
 	scriptCall()
 	displayLog()
+	sudo("cd /home/marius/fab/fab/git")
 	disconnect_all()
