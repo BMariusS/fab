@@ -2,6 +2,7 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
+
  
 #VARIABILES
 path = '/home/marius/fab/'
