@@ -60,9 +60,6 @@ def gitClone(folder):
 		sudo("echo 'Clone already exists' > %s" % logFile)
 		with cd("%s" % path):
 			sudo("rm -rf %s | echo 'Clone has been deleted' > %s" % (folder,logFile))
-	#else:	
-		#with cd("%s/git" % cale):
-			#sudo("git clone https://github.com/BMariusS/fab.git %s" % comanda)
 	with settings(warn_only=True):
 		with cd("%s" % path):
 			clone = sudo("git clone https://github.com/BMariusS/fab.git")
@@ -81,7 +78,6 @@ def gitCheckout(branch):
 			checkout = sudo("git checkout %s" % branch)
 			if checkout.return_code == 0:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
-				#sudo("tree %s" % comanda)
 			else:
 				sudo("echo '%s' >> %s" % (checkout,logFile))
 				sendMailError()
@@ -92,6 +88,7 @@ def gitCheckout(branch):
 def find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
+			print "%s" root
 			return os.path.join(root)
 
 
@@ -114,13 +111,13 @@ def displayLog():
 		sendMailError()
 		abort("Error at displaying logFile")
 
-#@parallel
+@parallel
 def final(cloneParameter,checkoutParameter='master'):
 	connection()
 	gitClone(cloneParameter)
 	gitCheckout(checkoutParameter)
 	scriptCall()
-	displayLog()
+	#displayLog()
 	disconnect_all()
 	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
 	os.chdir("%s" % clonePath)
