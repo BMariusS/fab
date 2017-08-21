@@ -116,5 +116,6 @@ def final(cloneParameter,checkoutParameter='master'):
 	scriptCall()
 	displayLog()
 	disconnect_all()
-	os.system("/home/marius/fab/fab")
+	os.chdir("/home/marius/fab/fab/git")
+	os.system("/bin/bash")
 
