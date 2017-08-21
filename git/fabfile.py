@@ -88,7 +88,14 @@ def gitCheckout(branch):
 				print "Error at checkout"
 				raise SystemExit()
  
- 
+
+def find(name, path):
+	for root, dirs, files in os.walk(path):
+		if name in files:
+			print "%s" % root
+			return os.path.join(root)
+
+
 def scriptCall():
 	with settings(warn_only=True):
 		scriptCall = sudo("%s/Practica/shellScript.sh" % script)
@@ -116,6 +123,7 @@ def final(cloneParameter,checkoutParameter='master'):
 	scriptCall()
 	displayLog()
 	disconnect_all()
-	os.chdir("/home/marius/fab/%s" % cloneParameter)
+	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	os.chdir("%s" % clonePath)
 	os.system("/bin/bash")
 
