@@ -86,11 +86,12 @@ def gitCheckout(branch):
  
 
 def find(name, path):
+	result = []
 	for root, dirs, files in os.walk(path):
 		if name in files:
-			print os.path.join(root,name)
-			return os.path.join(root)
-
+			result.append(os.path.join(root,name))
+			#return os.path.join(root)
+	return result
 
 def scriptCall():
 	with settings(warn_only=True):
@@ -113,13 +114,13 @@ def displayLog():
 
 @parallel
 def final(cloneParameter,checkoutParameter='master'):
-	connection()
-	gitClone(cloneParameter)
-	gitCheckout(checkoutParameter)
-	scriptCall()
+	#connection()
+	#gitClone(cloneParameter)
+	#gitCheckout(checkoutParameter)
+	#scriptCall()
 	#displayLog()
-	disconnect_all()
+	#disconnect_all()
 	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	os.chdir("%s" % clonePath)
-	os.system("/bin/bash")
+	#os.chdir("%s" % clonePath)
+	#os.system("/bin/bash")
 
