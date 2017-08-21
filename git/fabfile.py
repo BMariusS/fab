@@ -85,7 +85,7 @@ def gitCheckout(branch):
 				raise SystemExit()
  
 
-def find(name, path):
+def _find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
 			return os.path.join(root)
@@ -118,7 +118,7 @@ def final(cloneParameter='fab',checkoutParameter='master'):
 	scriptCall()
 	displayLog()
 	disconnect_all()
-	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
 	sudo("python /home/marius/script/fab/git/Test/fabfile.py")
 	os.chdir("%s" % clonePath)
 	os.system("/bin/bash")
