@@ -108,12 +108,13 @@ def displayLog():
 		sendMailError()
 		abort("Error at displaying logFile")
 
-@parallel
+#@parallel
 def final(cloneParameter,checkoutParameter='master'):
 	connection()
 	gitClone(cloneParameter)
 	gitCheckout(checkoutParameter)
 	scriptCall()
 	displayLog()
-	local("cd /home/marius/fab/fab")
 	disconnect_all()
+	os.system("/home/marius/fab/fab")
+
