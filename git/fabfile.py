@@ -111,15 +111,15 @@ def displayLog():
 		abort("Error at displaying logFile")
 
 @parallel
-def final(cloneParameter,checkoutParameter='master'):
-	#connection()
-	#gitClone(cloneParameter)
-	#gitCheckout(checkoutParameter)
-	#scriptCall()
-	#displayLog()
-	#disconnect_all()
+def final(cloneParameter='fab',checkoutParameter='master'):
+	connection()
+	gitClone(cloneParameter)
+	gitCheckout(checkoutParameter)
+	scriptCall()
+	displayLog()
+	disconnect_all()
 	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	print "%s" % clonePath
-	#os.chdir("%s" % clonePath)
-	#os.system("/bin/bash")
+	sudo("python /home/marius/script/fab/git/Test/fabfile.py")
+	os.chdir("%s" % clonePath)
+	os.system("/bin/bash")
 
