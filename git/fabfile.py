@@ -92,7 +92,6 @@ def gitCheckout(branch):
 def find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
-			print "%s" % root
 			return os.path.join(root)
 
 
