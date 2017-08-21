@@ -86,11 +86,11 @@ def connection():
 
 
  
-def gitClone():
-	if os.path.exists("%s/fab/" % path):
+def gitClone(folder):
+	if os.path.exists("%s/%s/" % (path,folder)):
 		sudo("echo 'Clone already exists' > %s" % logFile)
 		with cd("%s" % path):
-			sudo("rm -rf * | echo 'Clone has been deleted' > %s" % logFile)
+			sudo("rm -rf %s | echo 'Clone has been deleted' > %s" % (folder,logFile))
 	#else:	
 		#with cd("%s/git" % cale):
 			#sudo("git clone https://github.com/BMariusS/fab.git %s" % comanda)
@@ -140,7 +140,7 @@ def displayLog():
 		abort("Error at displaying logFile")
 
 @parallel
-def final(parameter):
+def final(parameter='master'):
 	connection()
 	gitClone()
 	gitCheckout(parameter)
