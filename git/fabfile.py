@@ -11,7 +11,6 @@ env.password="rootTest"
 logFile="/home/marius/script/fab/git/logFile.txt"
 mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
-test=True
 
 
 #FUNCTIONS
@@ -116,8 +115,6 @@ def final(cloneParameter,checkoutParameter='master'):
 	gitCheckout(checkoutParameter)
 	scriptCall()
 	displayLog()
-	with cd ("/home/marius/fab/fab/git"):
-		if test == True:
-			sudo("fab final:fab,fabBranch")
-			test = False
+	sudo("cd /home/marius/fab/fab")
+	sudo("cd git")
 	disconnect_all()
