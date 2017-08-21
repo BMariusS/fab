@@ -116,10 +116,10 @@ def final(cloneParameter='fab',checkoutParameter='master'):
 	gitClone(cloneParameter)
 	gitCheckout(checkoutParameter)
 	scriptCall()
-	displayLog()
+	#displayLog()
 	disconnect_all()
 	clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	sudo("python /home/marius/script/fab/git/Test/fabfile.py")
+	sudo("python /home/marius/script/fab/git/enviorenment/fabfile.py")
 	os.chdir("%s" % clonePath)
 	os.system("/bin/bash")
 
