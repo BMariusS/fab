@@ -4,12 +4,12 @@ from fabric.network import disconnect_all
 import os.path
  
 #VARIABILES
-path = '/home/marius/fab'
+path = '/home/marius/fab/'
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
-logFile="/home/marius/fab/git/logFile.txt"
-mailFile="/home/marius/fab/git/mails.txt"
+logFile="/home/marius/script/fab/git/logFile.txt"
+mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
  
  
@@ -87,14 +87,15 @@ def connection():
 
  
 def gitClone():
-	if os.path.exists("%s/git/fab" % path):
+	if os.path.exists("%s/fab/" % path):
 		sudo("echo 'Clone already exists' > %s" % logFile)
-		sudo("rm -rf %s/git/fab | echo 'Clone has been deleted' > %s" % (path,logFile))
+		with cd("%s" % path):
+			sudo("rm -rf * | echo 'Clone has been deleted' > %s" % logFile)
 	#else:	
 		#with cd("%s/git" % cale):
 			#sudo("git clone https://github.com/BMariusS/fab.git %s" % comanda)
 	with settings(warn_only=True):
-		with cd("%s/git" % path):
+		with cd("%s" % path):
 			clone = sudo("git clone https://github.com/BMariusS/fab.git")
 			if clone.return_code == 0:
 				sudo("echo '%s' > %s" % (clone,logFile))
