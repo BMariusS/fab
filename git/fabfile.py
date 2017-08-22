@@ -1,8 +1,9 @@
 #IMPORTS
 from fabric.api import *
 from fabric.network import disconnect_all
-import os.path
+from pyunpack import Archive
 from environment import fabfile
+import os.path
 
  
 #VARIABILES
@@ -22,7 +23,11 @@ def checkMailCommand():
 		print "Command mail does not exist"
 		raise SystemExit()
 
- 	
+#Check python module
+def checkPyunpack():
+	pyunpackModule = run("python -c '"'import pyunpack'"' && echo '"'Found'"' || echo '"'Not Found'"'")
+	return pyunpackModule
+
 def sendMailSuccess():
 	checkMailCommand()
 	if os.path.exists("%s" % mailFile):
@@ -56,7 +61,7 @@ def connection():
 		abort("Connection failed")
 
 
-
+#Clone for Method 0
 def gitClone(folder):
 	if os.path.exists("%s%s/" % (path,folder)):
 		sudo("echo 'Clone already exists' > %s" % logFile)
@@ -73,7 +78,7 @@ def gitClone(folder):
 				print "Error at cloning"
 				raise SystemExit()
 
- 
+#Checkout for Method 0
 def gitCheckout(branch):
 	with settings(warn_only=True):
 		with cd("%s/fab/git" % path):
@@ -86,7 +91,7 @@ def gitCheckout(branch):
 				print "Error at checkout"
 				raise SystemExit()
  
-
+#Function to find Method 0 path and refresh the path
 def _find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
@@ -104,7 +109,7 @@ def scriptCall():
 			sendMailError()
 			print "Error at calling the script"
 			raise SystemExit()
-
+#Display logFile
 def displayLog():
 	try:
 		sudo("cat %s" % logFile)
@@ -113,6 +118,7 @@ def displayLog():
 		abort("Error at displaying logFile")
 
 
+#Using fileCreation method from environment/fabfile.py
 def prepareEnvironment():
 	try:
 		environment = fabfile.fileCreation()
@@ -121,6 +127,7 @@ def prepareEnvironment():
 		print "Error at creating environment"
 		#raise SystemExit()
 
+#Clone to the source time stamp folder and checkout
 def clone(branch):
 	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
@@ -142,6 +149,14 @@ def clone(branch):
 				#sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
+
+		unzip = checkPyunpack()
+		if unzip == "Found":
+			Archive('test.zip').extractall('%s' % environmentPath[3])
+		else:
+			print "Error no pyunpack module installed"
+			raise SystemExit()
+		
 			
 
 #@parallel

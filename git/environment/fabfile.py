@@ -8,6 +8,7 @@ env.user="marius"
 env.password="rootTest"
 logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 
+#Create folder timestamp with 4 subfolders
 @parallel
 def fileCreation():
 	timeStamp = os.path.join("/media/marius/", datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
