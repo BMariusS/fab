@@ -113,14 +113,15 @@ def displayLog():
 
 @parallel
 def final(cloneParameter='fab',checkoutParameter='master'):
-	connection()
-	gitClone(cloneParameter)
-	gitCheckout(checkoutParameter)
-	scriptCall()
+	#connection()
+	#gitClone(cloneParameter)
+	#gitCheckout(checkoutParameter)
+	#scriptCall()
 	#displayLog()
-	disconnect_all()
-	clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	sudo("python /home/marius/script/fab/git/environment/fabfile.py")
-	os.chdir("%s" % clonePath)
-	os.system("/bin/bash")
+	#disconnect_all()
+	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	with cd("/home/marius/script/fab/git/environment"):
+		sudo("fab fileCreation")
+	#os.chdir("%s" % clonePath)
+	#os.system("/bin/bash")
 
