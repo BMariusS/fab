@@ -3,9 +3,9 @@ from fabric.network import disconnect_all
 from datetime import datetime
 import os
 
-#env.hosts=["localhost"]
-#env.user="marius"
-#env.password="rootTest"
+env.hosts=["localhost"]
+env.user="marius"
+env.password="rootTest"
 logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 
 @parallel
@@ -14,7 +14,7 @@ def fileCreation():
 	source = os.path.join("%s/source" % timeStamp)
 	build = os.path.join("%s/build" % timeStamp)
 	sdk = os.path.join("%s/sdk" % timeStamp)
-	binary = os.path.join("%/binary" % timeStamp)
+	binary = os.path.join("%s/binary" % timeStamp)
 	try:
 		timeStampLog = os.makedirs(timeStamp)
 		sourceLog = os.makedirs(source)
