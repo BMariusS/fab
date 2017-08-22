@@ -113,3 +113,8 @@
 /media/marius/2017-08-22_10:10:06/sdk 
 /media/marius/2017-08-22_10:10:06/source
 
+/media/marius/2017-08-22_12:07:00 
+/media/marius/2017-08-22_12:07:00/build 
+/media/marius/2017-08-22_12:07:00/sdk 
+/media/marius/2017-08-22_12:07:00/source
+

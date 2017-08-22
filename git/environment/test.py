@@ -1,0 +1,3 @@
+
+def testare():
+	print "Test"

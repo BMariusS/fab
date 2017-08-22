@@ -2,6 +2,7 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
+from environment import test
 
  
 #VARIABILES
@@ -111,17 +112,18 @@ def displayLog():
 		sendMailError()
 		abort("Error at displaying logFile")
 
-@parallel
+#@parallel
 def final(cloneParameter='fab',checkoutParameter='master'):
-	connection()
-	gitClone(cloneParameter)
-	gitCheckout(checkoutParameter)
-	scriptCall()
-	displayLog()
-	disconnect_all()
-	clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	with cd("/home/marius/script/fab/git/environment"):
-		sudo("fab fileCreation")
-	os.chdir("%s" % clonePath)
-	os.system("/bin/bash")
+	#connection()
+	#gitClone(cloneParameter)
+	#gitCheckout(checkoutParameter)
+	#scriptCall()
+	#displayLog()
+	#disconnect_all()
+	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	#with cd("/home/marius/script/fab/git/environment"):
+		#sudo("fab fiileCreation")
+	test.testare()
+	#os.chdir("%s" % clonePath)
+	#os.system("/bin/bash")
 
