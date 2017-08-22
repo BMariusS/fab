@@ -2,6 +2,7 @@ from fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
 import os
+from git import fabfile
 
 env.hosts=["localhost"]
 env.user="marius"
