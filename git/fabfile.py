@@ -127,7 +127,8 @@ def prepareEnvironment():
 		print "Error at creating environment"
 		#raise SystemExit()
 
-#Clone to the source time stamp folder and checkout
+
+#Clone to the source time stamp folder and checkout and unzip
 def clone(branch):
 	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
@@ -152,7 +153,7 @@ def clone(branch):
 
 		unzip = checkPyunpack()
 		if unzip == "Found":
-			Archive('test.zip').extractall('%s' % environmentPath[3])
+			Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
 		else:
 			print "Error no pyunpack module installed"
 			raise SystemExit()
