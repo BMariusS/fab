@@ -241,3 +241,21 @@ None
 /media/marius/2017-08-22_15:13:25/sdk
 None 
 
+/media/marius/2017-08-22_15:29:53 
+/media/marius/2017-08-22_15:29:53/source 
+/media/marius/2017-08-22_15:29:53/build 
+/media/marius/2017-08-22_15:29:53/sdk
+None 
+
+/media/marius/2017-08-22_15:31:22 
+/media/marius/2017-08-22_15:31:22/source 
+/media/marius/2017-08-22_15:31:22/build 
+/media/marius/2017-08-22_15:31:22/sdk
+None 
+
+/media/marius/2017-08-22_15:33:35 
+/media/marius/2017-08-22_15:33:35/source 
+/media/marius/2017-08-22_15:33:35/build 
+/media/marius/2017-08-22_15:33:35/sdk
+None 
+

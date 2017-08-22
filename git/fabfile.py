@@ -121,13 +121,22 @@ def prepareEnvironment():
 		print "Error at creating environment"
 		#raise SystemExit()
 
-def clone():
+def clone(branch):
 	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
 		with cd("%s" % environmentPath[1]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
 			if cloneSource.return_code == 0:
 				sudo("echo '%s' >> %s" % (clone,logFile))
+				with cd("%s/fab/git" % environmentPath[1]):
+					checkout = sudo("git checkout %s" % branch)
+					if checkout.return_code == 0:
+						sudo("echo '%s' >> %s" % (checkout,logFile))
+					else:
+						sudo("echo '%s' >> %s" % (checkout,logFile))
+						#sendMailError()
+						print "Error at checkout"
+						raise SystemExit()
 			else:
 				sudo("echo '%s' >> %s" % (clone,logFile))
 				#sendMailError()
@@ -141,10 +150,7 @@ def clone():
 	#gitClone(cloneParameter)
 	#gitCheckout(checkoutParameter)
 	#scriptCall()
-	#displayLog()
 	#disconnect_all()
 	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	#with cd("/home/marius/script/fab/git/environment"):
-		#sudo("fab fiileCreation")
-	#os.chdir("%s" % clonePath)
-	#os.system("/bin/bash")
+	#os.chdir("%s" % clonePath) #refresh the directory after removing the clone
+	#os.system("/bin/bash") #stay in the directory after executing the script
