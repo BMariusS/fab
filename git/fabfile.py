@@ -122,9 +122,9 @@ def prepareEnvironment():
 		#raise SystemExit()
 
 def clone():
-	#environment = prepareEnvironment()
+	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
-		with cd("%s" % environment[3]):
+		with cd("%s" % environmentPath[3]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
 			if cloneSource.return_code == 0:
 				sudo("echo '%s' >> %s" % (clone,logFile))

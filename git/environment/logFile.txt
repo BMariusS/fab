@@ -218,3 +218,8 @@
 /media/marius/2017-08-22_14:54:07/sdk 
 /media/marius/2017-08-22_14:54:07/source
 
+/media/marius/2017-08-22_15:00:03 
+/media/marius/2017-08-22_15:00:03/build 
+/media/marius/2017-08-22_15:00:03/sdk 
+/media/marius/2017-08-22_15:00:03/source
+
