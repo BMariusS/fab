@@ -1,3 +1,3 @@
 
-def testare():
-	print "Test"
+#def testare():
+	#print "Test"

@@ -3,7 +3,6 @@ from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
 from environment import fabfile
-from environment.fabfile import build,timeStamp
 
  
 #VARIABILES
@@ -113,8 +112,31 @@ def displayLog():
 		sendMailError()
 		abort("Error at displaying logFile")
 
+
+def prepareEnvironment():
+	try:
+		environment = fabfile.fileCreation()
+		return environment
+	except:
+		print "Error at creating environment"
+		#raise SystemExit()
+
+def clone():
+	#environment = prepareEnvironment()
+	with settings(warn_only=True):
+		with cd("%s" % environment[3]):
+			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
+			if cloneSource.return_code == 0:
+				sudo("echo '%s' >> %s" % (clone,logFile))
+			else:
+				sudo("echo '%s' >> %s" % (clone,logFile))
+				#sendMailError()
+				print "Error at cloning"
+				raise SystemExit()
+			
+
 #@parallel
-def final(cloneParameter='fab',checkoutParameter='master'):
+#def final(cloneParameter='fab',checkoutParameter='master'):
 	#connection()
 	#gitClone(cloneParameter)
 	#gitCheckout(checkoutParameter)
@@ -124,8 +146,5 @@ def final(cloneParameter='fab',checkoutParameter='master'):
 	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
 	#with cd("/home/marius/script/fab/git/environment"):
 		#sudo("fab fiileCreation")
-	fabfile.fileCreation()
-	print "%s" % build
 	#os.chdir("%s" % clonePath)
 	#os.system("/bin/bash")
-

@@ -2,13 +2,13 @@ from fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
 import os
-from git import fabfile
 
-env.hosts=["localhost"]
-env.user="marius"
-env.password="rootTest"
+#env.hosts=["localhost"]
+#env.user="marius"
+#env.password="rootTest"
+logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 
-#@parallel
+@parallel
 def fileCreation():
 	timeStamp = os.path.join("/media/marius/", datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
 	build = os.path.join("%s/build" % timeStamp)
@@ -19,13 +19,13 @@ def fileCreation():
 		buildLog = os.makedirs(build)
 		sdkLog = os.makedirs(sdk)
 		sourceLog = os.makedirs(source)
-		sudo("echo -e '%s \n%s \n%s \n%s\n' >> /home/marius/script/fab/git/environment/logFile.txt" % (timeStamp, build, sdk, source))
+		sudo("echo -e '%s \n%s \n%s \n%s\n' >> %s" % (timeStamp, build, sdk, source, logFile))
 		return (timeStamp, build, sdk, source)
 	except:
 		print "Error at creating timestamps"
-		raise SystemExit()
+		#raise SystemExit()
 
-def testare():
-	fabfile.final()
+#def testare():
+	#fabfile.final()
 
 
