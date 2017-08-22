@@ -11,16 +11,18 @@ logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 @parallel
 def fileCreation():
 	timeStamp = os.path.join("/media/marius/", datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+	source = os.path.join("%s/source" % timeStamp)
 	build = os.path.join("%s/build" % timeStamp)
 	sdk = os.path.join("%s/sdk" % timeStamp)
-	source = os.path.join("%s/source" % timeStamp)
+	binary = os.path.join("%/binary" % timeStamp)
 	try:
 		timeStampLog = os.makedirs(timeStamp)
+		sourceLog = os.makedirs(source)
 		buildLog = os.makedirs(build)
 		sdkLog = os.makedirs(sdk)
-		sourceLog = os.makedirs(source)
-		sudo("echo -e '%s \n%s \n%s \n%s\n' >> %s" % (timeStamp, build, sdk, source, logFile))
-		return (timeStamp, build, sdk, source)
+		binary = os.makedirs(binary)
+		sudo("echo -e '%s \n%s \n%s \n%s\n%s \n' >> %s" % (timeStamp, source, build, sdk, binary, logFile))
+		return (timeStamp, source, build, sdk, binary)
 	except:
 		print "Error at creating timestamps"
 		#raise SystemExit()
