@@ -2,7 +2,8 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 import os.path
-from environment import test
+from environment import fabfile
+from environment.fabfile import build,timeStamp
 
  
 #VARIABILES
@@ -123,7 +124,8 @@ def final(cloneParameter='fab',checkoutParameter='master'):
 	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
 	#with cd("/home/marius/script/fab/git/environment"):
 		#sudo("fab fiileCreation")
-	test.testare()
+	fabfile.fileCreation()
+	print "%s" % build
 	#os.chdir("%s" % clonePath)
 	#os.system("/bin/bash")
 

@@ -20,6 +20,7 @@ def fileCreation():
 		sdkLog = os.makedirs(sdk)
 		sourceLog = os.makedirs(source)
 		sudo("echo -e '%s \n%s \n%s \n%s\n' >> /home/marius/script/fab/git/environment/logFile.txt" % (timeStamp, build, sdk, source))
+		return (timeStamp, build, sdk, source)
 	except:
 		print "Error at creating timestamps"
 		raise SystemExit()
