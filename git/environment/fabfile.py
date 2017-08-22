@@ -26,8 +26,3 @@ def fileCreation():
 	except:
 		print "Error at creating timestamps"
 		#raise SystemExit()
-
-#def testare():
-	#fabfile.final()
-
-
