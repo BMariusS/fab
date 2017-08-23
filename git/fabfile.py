@@ -152,8 +152,8 @@ def clone():
 
 @task
 def checkout(branch):
-	testare = clone()
-	with cd("%s/fab/git" % testare):
+	soucePath = clone()
+	with cd("%s/fab/git" % sourcePath):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
