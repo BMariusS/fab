@@ -123,48 +123,52 @@ def displayLog():
 #Using fileCreation method from environment/fabfile.py
 def prepareEnvironment():
 	try:
-		environment = fabfile.fileCreation()
-		return environment
+		return fabfile.fileCreation()
 	except:
 		print "Error at creating environment"
 		#raise SystemExit()
 
-
 #Clone to the source time stamp folder and checkout and unzip
 @task
-def clone(branch):
+def clone():
 	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
 		with cd("%s" % environmentPath[1]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
 			if cloneSource.return_code == 0:
 				sudo("echo '%s' >> %s" % (clone,logFile))
-				with cd("%s/fab/git" % environmentPath[1]):
+				return environmentPath[1]
+			else:
+				sudo("echo '%s' >> %s" % (clone,logFile))
+				sendMailError()
+				print "Error at cloning"
+				raise SystemExit()
+		#unzip = checkPyunpack()
+		#if unzip == "Found":
+			#Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
+		#else:
+			#print "Error no pyunpack module installed"
+			#raise SystemExit()
+
+@task
+def checkout(branch):
+	testare = clone()
+	with cd("%s/fab/git" % testare):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 					else:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
-						#sendMailError()
+						sendMailError()
 						print "Error at checkout"
 						raise SystemExit()
-			else:
-				sudo("echo '%s' >> %s" % (clone,logFile))
-				#sendMailError()
-				print "Error at cloning"
-				raise SystemExit()
 
-		unzip = checkPyunpack()
-		if unzip == "Found":
-			Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
-		else:
-			print "Error no pyunpack module installed"
-			raise SystemExit()
 
-@task	
-def test():
-	put("test.txt", "/home/marius/script/fab/git/environment", use_sudo=True)
-	
+#@task	
+#def test():
+	#put("test.txt", "/home/marius/script/fab/git/environment", use_sudo=True)
+
+
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
