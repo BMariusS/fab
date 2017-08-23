@@ -14,6 +14,7 @@ env.password="rootTest"
 logFile="/home/marius/script/fab/git/logFile.txt"
 mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
+pathMedia = "/media/marius"
 
 #FUNCTIONS
 def checkMailCommand():
@@ -118,20 +119,35 @@ def displayLog():
 		sendMailError()
 		abort("Error at displaying logFile")
 
-'''
+
+@task
+def prepareEnvironment(projectName):
+	if os.path.exists("%s/%s" % (pathMedia,projectName)):
+		print "This project already exists"
+		raise SystemExit()
+	try:
+		build = os.path.join("%s/%s/build" % (pathMedia,projectName))
+		sdk = os.path.join("%s/%s/sdk" % (pathMedia,projectName))
+		os.makedirs(build)
+		os.makedirs(sdk)
+		sudo("echo -e '%s \n%s \n' >> %s" % (build, sdk, logFile))
+	except:
+		print "Error at creating build and sdk folders"
+
+
 #Clone to the source time stamp folder
 @task
-def environment(branch):
+def timeStampsFolders(projectName,branch):
 	try:
-		environmentPath = fabfile.fileCreation()
+		timeStampPath = fabfile.timeStamps(projectName)
 	except:
 		print "error at creating environment"
 	with settings(warn_only=True):
-		with cd("%s" % environmentPath[1]):
+		with cd("%s" % timeStampPath[0]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
 			if cloneSource.return_code == 0:
 				sudo("echo '%s' >> %s" % (cloneSource,logFile))
-				with cd("%s/fab/git" % environmentPath[1]):
+				with cd("%s/fab/git" % timeStampPath[0]):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
@@ -147,11 +163,10 @@ def environment(branch):
 				raise SystemExit()
 	unzip=checkPyunpack()
 	if unzip == "Found":
-		Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
+		Archive('test.zip').extractall('%s/%s/sdk' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path 
 	else:
 		print "Error no pyunpack module installed"
 		raise SystemExit()
-'''
 
 #@task	
 #def test():
