@@ -11,8 +11,8 @@ path = '/home/marius/fab/'
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
-logFile="/home/marius/fab/fab/git/logFile.txt"
-mailFile="/home/marius/fab/fab/git/mails.txt"
+logFile="/home/marius/script/fab/git/logFile.txt"
+mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
 
 
@@ -160,8 +160,11 @@ def clone(branch):
 		else:
 			print "Error no pyunpack module installed"
 			raise SystemExit()
-		
-			
+
+@task	
+def test():
+	put("test.txt", "/home/marius/script/fab/git/environment", use_sudo=True)
+	
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
