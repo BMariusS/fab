@@ -4,6 +4,7 @@ from fabric.network import disconnect_all
 from pyunpack import Archive
 from environment import fabfile
 import os.path
+from textwrap import wrap
 
  
 #VARIABILES
@@ -14,6 +15,7 @@ env.password="rootTest"
 logFile="/home/marius/script/fab/git/logFile.txt"
 mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
+test = []
 
 
 #FUNCTIONS
@@ -120,18 +122,13 @@ def displayLog():
 		abort("Error at displaying logFile")
 
 
-#Using fileCreation method from environment/fabfile.py
-def prepareEnvironment():
-	try:
-		return fabfile.fileCreation()
-	except:
-		print "Error at creating environment"
-		#raise SystemExit()
-
-#Clone to the source time stamp folder and checkout and unzip
+#Clone to the source time stamp folder
 @task
 def clone():
-	environmentPath = prepareEnvironment()
+	try:
+		environmentPath = fabfile.fileCreation()
+	except:
+		print "error at creating environment"
 	with settings(warn_only=True):
 		with cd("%s" % environmentPath[1]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
@@ -144,26 +141,31 @@ def clone():
 				print "Error at cloning"
 				raise SystemExit()
 
+#Clone to the source time stamp folder and checkout
 @task
 def checkout(branch):
-	soucePath = clone()
+	sourcePath = clone()
 	with cd("%s/fab/git" % sourcePath[1]):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
+						return sourcePath
 					else:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 						sendMailError()
 						print "Error at checkout"
 						raise SystemExit()
 
-
-		unzip = checkPyunpack()
-		if unzip == "Found":
-			Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
-		else:
-			print "Error no pyunpack module installed"
-			raise SystemExit()
+#Clone to the source time stamp folder, checkout and unzip in sdk
+@task
+def unzip(branch):
+	unzip = checkPyunpack()
+	unzipLocation = checkout(branch)
+	if unzip == "Found":
+		Archive('test.zip').extractall('%s' % unzipLocation[3]) #unzips test.zip from current directory to sdk path 
+	else:
+		print "Error no pyunpack module installed"
+		raise SystemExit()
 
 #@task	
 #def test():
