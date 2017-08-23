@@ -137,23 +137,17 @@ def clone():
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
 			if cloneSource.return_code == 0:
 				sudo("echo '%s' >> %s" % (clone,logFile))
-				return environmentPath[1]
+				return environmentPath
 			else:
 				sudo("echo '%s' >> %s" % (clone,logFile))
 				sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
-		#unzip = checkPyunpack()
-		#if unzip == "Found":
-			#Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
-		#else:
-			#print "Error no pyunpack module installed"
-			#raise SystemExit()
 
 @task
 def checkout(branch):
 	soucePath = clone()
-	with cd("%s/fab/git" % sourcePath):
+	with cd("%s/fab/git" % sourcePath[1]):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
@@ -163,6 +157,13 @@ def checkout(branch):
 						print "Error at checkout"
 						raise SystemExit()
 
+
+		unzip = checkPyunpack()
+		if unzip == "Found":
+			Archive('test.zip').extractall('%s' % environmentPath[3]) #unzips test.zip from current directory to sdk path 
+		else:
+			print "Error no pyunpack module installed"
+			raise SystemExit()
 
 #@task	
 #def test():
