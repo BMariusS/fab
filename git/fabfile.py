@@ -62,6 +62,7 @@ def connection():
 
 
 #Clone for Method 0
+@task
 def gitClone(folder):
 	if os.path.exists("%s%s/" % (path,folder)):
 		sudo("echo 'Clone already exists' > %s" % logFile)
@@ -79,6 +80,7 @@ def gitClone(folder):
 				raise SystemExit()
 
 #Checkout for Method 0
+@task
 def gitCheckout(branch):
 	with settings(warn_only=True):
 		with cd("%s/fab/git" % path):
@@ -92,12 +94,12 @@ def gitCheckout(branch):
 				raise SystemExit()
  
 #Function to find Method 0 path and refresh the path
-def _find(name, path):
+def find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
 			return os.path.join(root)
 
-
+@task
 def scriptCall():
 	with settings(warn_only=True):
 		scriptCall = sudo("%s/Practica/shellScript.sh" % script)
@@ -129,6 +131,7 @@ def prepareEnvironment():
 
 
 #Clone to the source time stamp folder and checkout and unzip
+@task
 def clone(branch):
 	environmentPath = prepareEnvironment()
 	with settings(warn_only=True):
@@ -159,7 +162,7 @@ def clone(branch):
 			raise SystemExit()
 		
 			
-
+#@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
 	#connection()
@@ -167,6 +170,6 @@ def clone(branch):
 	#gitCheckout(checkoutParameter)
 	#scriptCall()
 	#disconnect_all()
-	#clonePath = _find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	#clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
 	#os.chdir("%s" % clonePath) #refresh the directory after removing the clone
 	#os.system("/bin/bash") #stay in the directory after executing the script
