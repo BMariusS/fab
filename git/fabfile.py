@@ -81,6 +81,7 @@ def gitClone(folder):
 				print "Error at cloning"
 				raise SystemExit()
 
+
 #Checkout for Method 0
 @task
 def gitCheckout(branch):
@@ -94,12 +95,14 @@ def gitCheckout(branch):
 				sendMailError()
 				print "Error at checkout"
 				raise SystemExit()
+
  
 #Function to find Method 0 path and refresh the path
 def find(name, path):
 	for root, dirs, files in os.walk(path):
 		if name in files:
 			return os.path.join(root)
+
 
 @task
 def scriptCall():
@@ -113,6 +116,8 @@ def scriptCall():
 			sendMailError()
 			print "Error at calling the script"
 			raise SystemExit()
+
+
 #Display logFile
 def displayLog():
 	try:
@@ -135,6 +140,7 @@ def prepareEnvironment(projectName):
 		sudo("echo -e '%s \n%s \n' >> %s" % (build, sdk, logFile))
 	except:
 		print "Error at creating build and sdk folders"
+
 
 
 #Clone to the source time stamp folder
@@ -163,9 +169,8 @@ def timeStampsFolders(projectName,branch):
 				sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
-'''
-	
-'''
+
+
 
 @task	
 def moveSDK(projectName):
@@ -180,6 +185,8 @@ def moveSDK(projectName):
 					print "This %s/%s/sdk/%s is not an archive" % (pathMedia,projectName,fileArchive)
 	else:
 		print "There is nothing in %s/%s/sdk/" % (pathMedia,projectName)
+
+
 @task
 def unzip(projectName):
 	unzip=checkPyunpack()
@@ -196,6 +203,7 @@ def unzip(projectName):
 	else:
 		print "Error no pyunpack module installed"
 		raise SystemExit()
+
 
 #@task
 #@parallel
