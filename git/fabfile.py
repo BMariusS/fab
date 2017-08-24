@@ -164,12 +164,7 @@ def timeStampsFolders(projectName,branch):
 				print "Error at cloning"
 				raise SystemExit()
 '''
-	unzip=checkPyunpack()
-	if unzip == "Found":
-		Archive('test.zip').extractall('%s/%s/sdk' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path 
-	else:
-		print "Error no pyunpack module installed"
-		raise SystemExit()
+	
 '''
 
 @task	
@@ -185,6 +180,22 @@ def moveSDK(projectName):
 					print "This %s/%s/sdk/%s is not an archive" % (pathMedia,projectName,fileArchive)
 	else:
 		print "There is nothing in %s/%s/sdk/" % (pathMedia,projectName)
+@task
+def unzip(projectName):
+	unzip=checkPyunpack()
+	if unzip == "Found":
+		for serverArchive in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+			if serverArchive.endswith(".zip"):
+				checkContent = zipfile.ZipFile('%s' % serverArchive, 'r').namelist()
+				for files in checkContent:
+					if not files in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+						Archive('%s' % serverArchive).extractall('%s/%s/build/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path 
+					else:
+						print "The content of the %s archive is already extracted or has files with the same name" % serverArchive
+						raise SystemExit()
+	else:
+		print "Error no pyunpack module installed"
+		raise SystemExit()
 
 #@task
 #@parallel
