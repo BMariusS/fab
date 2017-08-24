@@ -145,7 +145,7 @@ def prepareEnvironment(projectName):
 
 #Clone to the source time stamp folder
 @task
-def timeStampsFolders(projectName,branch):
+def timeStampFolders(projectName,branch):
 	try:
 		timeStampPath = fabfile.timeStamps(projectName)
 	except:
@@ -159,6 +159,16 @@ def timeStampsFolders(projectName,branch):
 					checkout = sudo("git checkout %s" % branch)
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
+						try:
+							if os.path.exists("%s/server/source/" % pathMedia):
+								print "test"
+							else:
+								os.makedirs("%s/server/source/" % pathMedia)
+							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
+							print "Succes at moving projects on server"
+						except:
+							print "Error at moving projects on server"
+							
 					else:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 						sendMailError()
@@ -177,7 +187,7 @@ def moveSDK(projectName):
 	for sdkArchive in os.listdir("%s/%s/sdk/" % (pathMedia, projectName)):
 		if sdkArchive.endswith(".zip"):
 			try:
-				put('%s' % sdkArchive, '%s/%s/build/' % (pathMedia,projectName), use_sudo = True)
+				put('%s' % sdkArchive, '%s/server/sdk/' % pathMedia, use_sudo = True)
 			except:
 				print "Error at moving on server"
 		else:
@@ -189,10 +199,10 @@ def moveSDK(projectName):
 def unzip(projectName):
 	unzip=checkPyunpack()
 	if unzip == "Found":
-		for serverArchive in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+		for serverArchive in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
 			if serverArchive.endswith(".zip"):
 				try:
-					 Archive('%s' % serverArchive).extractall('%s/%s/build/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path
+					 Archive('%s' % serverArchive).extractall('%s/%s/sdk/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path
 				except:
 					print "Error at unziping"
 			else:
@@ -203,9 +213,9 @@ def unzip(projectName):
 
 @task
 def runCMake(projectName):
-	for cmakeFind in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+	for cmakeFind in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
 		with settings(warn_only=True):
-			with cd("%s/%s/build/" % (pathMedia,projectName)):
+			with cd("%s/%s/sdk/" % (pathMedia,projectName)):
 				if cmakeFind == "CMakeLists.txt":
 					cmake = sudo("cmake %s" % cmakeFind)
 					if cmake.return_code == 0:
