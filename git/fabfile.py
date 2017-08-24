@@ -5,6 +5,7 @@ from pyunpack import Archive
 from environment import fabfile
 import os.path
 import zipfile
+import fnmatch
 
  
 #VARIABILES
@@ -175,8 +176,13 @@ def timeStampsFolders(projectName,branch):
 def moveSDK(projectName):
 	if os.path.exists("%s/%s/sdk/" % (pathMedia,projectName)) and not os.listdir("%s/%s/sdk/" % (pathMedia,projectName)) == []:
 		for fileArchive in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
-			if fileArchive.endswith(".zip"):
-				put("%s/%s/sdk/%s" % (pathMedia,projectName,fileArchive), "%s/%s/build" % (pathMedia,projectName), use_sudo=True)
+				if fileArchive.endswith(".zip"):
+					if not fileArchive in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+						put("%s/%s/sdk/%s" % (pathMedia,projectName,fileArchive), "%s/%s/build" % (pathMedia,projectName), use_sudo=True)
+					else:
+						print "The folder %s already exists on server" % fileArchive
+				else:
+					print "This %s/%s/sdk/%s is not an archive" % (pathMedia,projectName,fileArchive)
 	else:
 		print "There is nothing in %s/%s/sdk/" % (pathMedia,projectName)
 
