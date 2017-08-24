@@ -174,17 +174,15 @@ def timeStampsFolders(projectName,branch):
 
 @task	
 def moveSDK(projectName):
-	if os.path.exists("%s/%s/sdk/" % (pathMedia,projectName)) and not os.listdir("%s/%s/sdk/" % (pathMedia,projectName)) == []:
-		for fileArchive in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
-				if fileArchive.endswith(".zip"):
-					if not fileArchive in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
-						put("%s/%s/sdk/%s" % (pathMedia,projectName,fileArchive), "%s/%s/build" % (pathMedia,projectName), use_sudo=True)
-					else:
-						print "The folder %s already exists on server" % fileArchive
-				else:
-					print "This %s/%s/sdk/%s is not an archive" % (pathMedia,projectName,fileArchive)
-	else:
-		print "There is nothing in %s/%s/sdk/" % (pathMedia,projectName)
+	for sdkArchive in os.listdir("%s/%s/sdk/" % (pathMedia, projectName)):
+		if sdkArchive.endswith(".zip"):
+			try:
+				put('%s' % sdkArchive, '%s/%s/build/' % (pathMedia,projectName), use_sudo = True)
+			except:
+				print "Error at moving on server"
+		else:
+			print "Not an archive"
+			raise SystemExit()
 
 
 @task
@@ -193,13 +191,12 @@ def unzip(projectName):
 	if unzip == "Found":
 		for serverArchive in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
 			if serverArchive.endswith(".zip"):
-				checkContent = zipfile.ZipFile('%s' % serverArchive, 'r').namelist()
-				for files in checkContent:
-					if not files in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
-						Archive('%s' % serverArchive).extractall('%s/%s/build/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path 
-					else:
-						print "The content of the %s archive is already extracted or has files with the same name" % serverArchive
-						raise SystemExit()
+				try:
+					 Archive('%s' % serverArchive).extractall('%s/%s/build/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path
+				except:
+					print "Error at unziping"
+			else:
+				print "Error no archive"
 	else:
 		print "Error no pyunpack module installed"
 		raise SystemExit()
