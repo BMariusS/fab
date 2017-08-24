@@ -229,6 +229,12 @@ def runCMake(projectName):
 						print "Error at calling CMakeLists.txt"
 
 
+@task
+def test(projectName,branch):
+	timeStampFolders(projectName,branch)
+	moveSDK(projectName)
+	unzip(projectName)
+	runCMake(projectName)
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
