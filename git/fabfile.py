@@ -4,6 +4,7 @@ from fabric.network import disconnect_all
 from pyunpack import Archive
 from environment import fabfile
 import os.path
+import zipfile
 
  
 #VARIABILES
@@ -161,17 +162,23 @@ def timeStampsFolders(projectName,branch):
 				sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
+'''
 	unzip=checkPyunpack()
 	if unzip == "Found":
 		Archive('test.zip').extractall('%s/%s/sdk' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path 
 	else:
 		print "Error no pyunpack module installed"
 		raise SystemExit()
+'''
 
-#@task	
-#def test():
-	#put("test.txt", "/home/marius/script/fab/git/environment", use_sudo=True)
-
+@task	
+def moveSDK(projectName):
+	if os.path.exists("%s/%s/sdk/" % (pathMedia,projectName)) and not os.listdir("%s/%s/sdk/" % (pathMedia,projectName)) == []:
+		for fileArchive in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
+			if fileArchive.endswith(".zip"):
+				put("%s/%s/sdk/%s" % (pathMedia,projectName,fileArchive), "%s/%s/build" % (pathMedia,projectName), use_sudo=True)
+	else:
+		print "There is nothing in %s/%s/sdk/" % (pathMedia,projectName)
 
 #@task
 #@parallel
