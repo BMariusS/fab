@@ -65,4 +65,15 @@ def timeStamps(projectName):
 					print "Error at creating source and binary time stamp"
 		except:
 			print "Error at creating source and binary folders"
+	if os.path.exists("%s/%s/source" % (path,projectName)) and os.path.exists("%s/%s/binary" % (path,projectName)):
+		try:
+			sourceTimeStamp = os.path.join("%s/%s/source" % (path,projectName), datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+			binaryTimeStamp = os.path.join("%s/%s/binary" % (path,projectName), datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
+			os.makedirs(sourceTimeStamp)
+			os.makedirs(binaryTimeStamp)
+			sudo("echo -e '%s \n%s \n' >> %s" % (sourceTimeStamp, binaryTimeStamp, logFile))
+			return (sourceTimeStamp, binaryTimeStamp)
+		except:
+			print "Error at creating source and binary time stamp"
+		
 
