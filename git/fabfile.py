@@ -201,7 +201,16 @@ def unzip(projectName):
 		print "Error no pyunpack module installed"
 		raise SystemExit()
 
-
+@task
+def runCMake(projectName):
+	for cmakeFind in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
+		if cmakeFind == "CMakeLists.txt":
+			try:
+				print "test"
+			except:
+				print "Error at calling CMakeLists.txt"
+		else:
+			print "No CMakeList"
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
