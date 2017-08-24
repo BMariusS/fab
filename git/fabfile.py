@@ -206,7 +206,7 @@ def runCMake(projectName):
 	for cmakeFind in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
 		if cmakeFind == "CMakeLists.txt":
 			try:
-				print "test"
+				sudo("cmake %s; make" % cmakeFind)
 			except:
 				print "Error at calling CMakeLists.txt"
 		else:
