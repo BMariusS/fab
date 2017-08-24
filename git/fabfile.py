@@ -204,13 +204,21 @@ def unzip(projectName):
 @task
 def runCMake(projectName):
 	for cmakeFind in os.listdir("%s/%s/build/" % (pathMedia,projectName)):
-		if cmakeFind == "CMakeLists.txt":
-			try:
-				sudo("cmake %s; make" % cmakeFind)
-			except:
-				print "Error at calling CMakeLists.txt"
-		else:
-			print "No CMakeList"
+		with settings(warn_only=True):
+			with cd("%s/%s/build/" % (pathMedia,projectName)):
+				if cmakeFind == "CMakeLists.txt":
+					cmake = sudo("cmake %s" % cmakeFind)
+					if cmake.return_code == 0:
+						print "CMake succes"
+						make = sudo ("make")
+						if make.return_code == 0:
+							print "Make succes"
+						else:
+							print "Error at make"
+					else:
+						print "Error at calling CMakeLists.txt"
+
+
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
