@@ -3,13 +3,13 @@ from fabric.network import disconnect_all
 from datetime import datetime
 import os
 from functools import wraps
+import tarfile
 
 env.hosts=["localhost"]
 env.user="marius"
 env.password="rootTest"
 logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 pathMedia="/media/marius"
-import tarfile
 	
 def timeStamps(projectName):
 	if not os.path.exists("%s/%s/source" % (pathMedia,projectName)) and os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
@@ -115,6 +115,7 @@ def timeStampFolders(projectName,branch):
 							else:
 								os.makedirs("%s/server/source/" % pathMedia)
 							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
+							test = timeStampPath[0]
 							print "Succes at moving projects on server"
 						except:
 							print "Error at moving projects on server"
