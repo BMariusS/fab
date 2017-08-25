@@ -1,11 +1,10 @@
 #IMPORTS
 from fabric.api import *
 from fabric.network import disconnect_all
-from pyunpack import Archive
+#from pyunpack import Archive
 from environment import fabfile
 import os.path
-import zipfile
-import fnmatch
+import tarfile
 
  
 #VARIABILES
@@ -24,12 +23,12 @@ def checkMailCommand():
 	if mailCommand == "Not Found":
 		print "Command mail does not exist"
 		raise SystemExit()
-
+'''
 #Check python module
 def checkPyunpack():
 	pyunpackModule = run("python -c '"'import pyunpack'"' && echo '"'Found'"' || echo '"'Not Found'"'")
 	return pyunpackModule
-
+'''
 def sendMailSuccess():
 	checkMailCommand()
 	if os.path.exists("%s" % mailFile):
@@ -185,31 +184,33 @@ def timeStampFolders(projectName,branch):
 @task	
 def moveSDK(projectName):
 	for sdkArchive in os.listdir("%s/%s/sdk/" % (pathMedia, projectName)):
-		if sdkArchive.endswith(".zip"):
+		if sdkArchive.endswith(".tar.gz"):
 			try:
 				put('%s' % sdkArchive, '%s/server/sdk/' % pathMedia, use_sudo = True)
 			except:
 				print "Error at moving on server"
 		else:
-			print "Not an archive"
+			print "Not a tar archive"
 			raise SystemExit()
 
 
 @task
 def unzip(projectName):
-	unzip=checkPyunpack()
-	if unzip == "Found":
-		for serverArchive in os.listdir("%s/server/sdk/" % pathMedia):
-			if serverArchive.endswith(".zip"):
-				try:
-					 Archive('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia) #unzips test.zip from current directory to sdk path
-				except:
-					print "Error at unziping"
-			else:
-				print "Error no archive"
-	else:
-		print "Error no pyunpack module installed"
-		raise SystemExit()
+	#unzip=checkPyunpack()
+	#if unzip == "Found":
+	for serverArchive in os.listdir("%s/server/sdk/" % pathMedia):
+		if serverArchive.endswith(".tar.gz"):
+			try:
+				tarfile.open(serverArchive).extractall('%s/server/sdk/' % pathMedia)
+				#Archive('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia) #unzips test.tar.gz from current directory to sdk path
+			except:
+				print "Error at unziping"
+		else:
+			print "Error no archive"
+			raise SystemExit()
+	#else:
+		#print "Error no pyunpack module installed"
+		#raise SystemExit()
 
 @task
 def runCMake(projectName):
@@ -235,6 +236,8 @@ def test(projectName,branch):
 	moveSDK(projectName)
 	unzip(projectName)
 	runCMake(projectName)
+
+
 #@task
 #@parallel
 #def final(cloneParameter='fab',checkoutParameter='master'):
