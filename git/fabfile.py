@@ -161,7 +161,7 @@ def timeStampFolders(projectName,branch):
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 						try:
 							if os.path.exists("%s/server/source/" % pathMedia):
-								print "test"
+								print "Source exiists"
 							else:
 								os.makedirs("%s/server/source/" % pathMedia)
 							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
@@ -199,10 +199,10 @@ def moveSDK(projectName):
 def unzip(projectName):
 	unzip=checkPyunpack()
 	if unzip == "Found":
-		for serverArchive in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
+		for serverArchive in os.listdir("%s/server/sdk/" % pathMedia):
 			if serverArchive.endswith(".zip"):
 				try:
-					 Archive('%s' % serverArchive).extractall('%s/%s/sdk/' % (pathMedia,projectName)) #unzips test.zip from current directory to sdk path
+					 Archive('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia) #unzips test.zip from current directory to sdk path
 				except:
 					print "Error at unziping"
 			else:
@@ -213,9 +213,9 @@ def unzip(projectName):
 
 @task
 def runCMake(projectName):
-	for cmakeFind in os.listdir("%s/%s/sdk/" % (pathMedia,projectName)):
+	for cmakeFind in os.listdir("%s/server/sdk/" % pathMedia):
 		with settings(warn_only=True):
-			with cd("%s/%s/sdk/" % (pathMedia,projectName)):
+			with cd("%s/server/sdk/" % pathMedia):
 				if cmakeFind == "CMakeLists.txt":
 					cmake = sudo("cmake %s" % cmakeFind)
 					if cmake.return_code == 0:
