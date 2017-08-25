@@ -2,7 +2,7 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 #from pyunpack import Archive
-from environment import fabfile
+#from environment import fabfile
 import os.path
 
  
