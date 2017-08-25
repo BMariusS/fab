@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 from functools import wraps
 import tarfile
+import glob
 
 env.hosts=["localhost"]
 env.user="marius"
@@ -92,47 +93,6 @@ def prepareEnvironment(projectName):
 		print "Error at creating build and sdk folders"
 
 
-
-#Clone to the source time stamp folder
-@task
-def timeStampFolders(projectName,branch):
-	try:
-		timeStampPath = timeStamps(projectName)
-	except:
-		print "error at creating environment"
-	with settings(warn_only=True):
-		with cd("%s" % timeStampPath[0]):
-			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
-			if cloneSource.return_code == 0:
-				sudo("echo '%s' >> %s" % (cloneSource,logFile))
-				with cd("%s/fab/git" % timeStampPath[0]):
-					checkout = sudo("git checkout %s" % branch)
-					if checkout.return_code == 0:
-						sudo("echo '%s' >> %s" % (checkout,logFile))
-						try:
-							if os.path.exists("%s/server/source/" % pathMedia):
-								print "Source exiists"
-							else:
-								os.makedirs("%s/server/source/" % pathMedia)
-							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
-							test = timeStampPath[0]
-							print "Succes at moving projects on server"
-						except:
-							print "Error at moving projects on server"
-							
-					else:
-						sudo("echo '%s' >> %s" % (checkout,logFile))
-						#sendMailError()
-						print "Error at checkout"
-						raise SystemExit()
-			else:
-				sudo("echo '%s' >> %s" % (cloneSource,logFile))
-				#sendMailError()
-				print "Error at cloning"
-				raise SystemExit()
-
-
-
 @task	
 def moveSDK(projectName):
 	for sdkArchive in os.listdir("%s/%s/sdk/" % (pathMedia, projectName)):
@@ -150,10 +110,10 @@ def moveSDK(projectName):
 def unzip():
 	#unzip=checkPyunpack()
 	#if unzip == "Found":
-	for serverArchive in os.listdir("%s/server/sdk/" % pathMedia):
+	for serverArchive in glob.glob("%s/server/sdk/*.tar.gz" % pathMedia):
 		if serverArchive.endswith(".tar.gz"):
 			try:
-				tarfile.open('%s/server/sdk/%s' % (pathMedia,serverArchive)).extractall('%s/server/sdk/' % pathMedia)
+				tarfile.open('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia)
 				#Archive('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia) #unzips test.tar.gz from current directory to sdk path
 			except:
 				print "Error at unziping"
@@ -182,10 +142,49 @@ def runCMake(projectName):
 					else:
 						print "Error at calling CMakeLists.txt"
 
+
+#Clone to the source time stamp folder
 @task
-def test(projectName,branch):
-	timeStampFolders(projectName,branch)
-	moveSDK(projectName)
-	unzip()
-	runCMake(projectName)
+def timeStampFolders(projectName,branch):
+	try:
+		timeStampPath = timeStamps(projectName)
+	except:
+		print "error at creating environment"
+	with settings(warn_only=True):
+		with cd("%s" % timeStampPath[0]):
+			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
+			if cloneSource.return_code == 0:
+				sudo("echo '%s' >> %s" % (cloneSource,logFile))
+				with cd("%s/fab/git" % timeStampPath[0]):
+					checkout = sudo("git checkout %s" % branch)
+					if checkout.return_code == 0:
+						sudo("echo '%s' >> %s" % (checkout,logFile))
+						try:
+							if os.path.exists("%s/server/source/" % pathMedia):
+								print "Source exiists"
+							else:
+								os.makedirs("%s/server/source/" % pathMedia)
+							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
+							print "Succes at moving projects on server"
+							moveSDK(projectName)
+							unzip()
+							runCMake(projectName)
+							#rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/*
+							if os.listdir("%s/server/sdk/example_project/build" % pathMedia) != []:
+								test = os.path.split(timeStampPath[0])
+								print "%s" % test[-1]
+								get('%s/server/sdk/example_project/build' % pathMedia, '%s/%s/binary/%s' %(pathMedia,projectName,test[-1]), use_sudo = True)
+						except:
+							print "Error at moving projects on server"
+							
+					else:
+						sudo("echo '%s' >> %s" % (checkout,logFile))
+						#sendMailError()
+						print "Error at checkout"
+						raise SystemExit()
+			else:
+				sudo("echo '%s' >> %s" % (cloneSource,logFile))
+				#sendMailError()
+				print "Error at cloning"
+				raise SystemExit()
 
