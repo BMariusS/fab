@@ -180,10 +180,6 @@ def runCMake(projectName):
 							print "Error at make"
 					else:
 						print "Error at calling CMakeLists.txt"
-@task
-def moveToBinary():
-	for serverTimeStamp in os.listdir("%s/server/source/" % pathMedia):
-		print "%s" % serverTimeStamp
 
 @task
 def test(projectName,branch):
