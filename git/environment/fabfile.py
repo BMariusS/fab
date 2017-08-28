@@ -2,7 +2,6 @@ from fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
 import os
-from functools import wraps
 import tarfile
 import glob
 
@@ -11,6 +10,10 @@ env.user="marius"
 env.password="rootTest"
 logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 pathMedia="/media/marius"
+serverSDKPath = "%s/server/sdk" % pathMedia
+serverSourcePath = "%s/server/source" % pathMedia
+
+#rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/*
 	
 def timeStamps(projectName):
 	if not os.path.exists("%s/%s/source" % (pathMedia,projectName)) and os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
@@ -98,7 +101,7 @@ def moveSDK(projectName):
 	for sdkArchive in os.listdir("%s/%s/sdk/" % (pathMedia, projectName)):
 		if sdkArchive.endswith(".tar.gz"):
 			try:
-				put('%s/%s/sdk/%s' % (pathMedia,projectName,sdkArchive), '%s/server/sdk/' % pathMedia, use_sudo = True)
+				put('%s/%s/sdk/%s' % (pathMedia,projectName,sdkArchive), '%s/' % serverSDKPath, use_sudo = True)
 			except:
 				print "Error at moving on server"
 		else:
@@ -108,33 +111,27 @@ def moveSDK(projectName):
 
 @task
 def unzip():
-	#unzip=checkPyunpack()
-	#if unzip == "Found":
-	for serverArchive in glob.glob("%s/server/sdk/*.tar.gz" % pathMedia):
+	for serverArchive in glob.glob("%s/*.tar.gz" % serverSDKPath):
 		if serverArchive.endswith(".tar.gz"):
 			try:
-				tarfile.open('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia)
-				#Archive('%s' % serverArchive).extractall('%s/server/sdk/' % pathMedia) #unzips test.tar.gz from current directory to sdk path
+				tarfile.open('%s' % serverArchive).extractall('%s/' % serverSDKPath)
 			except:
 				print "Error at unziping"
 		else:
 			print "Error no archive"
 			raise SystemExit()
-	#else:
-		#print "Error no pyunpack module installed"
-		#raise SystemExit()
 
 @task
 def runCMake(projectName):
-	for cmakeFind in os.listdir("%s/server/sdk/example_project" % pathMedia):
+	for cmakeFind in os.listdir("%s/example_project" % serverSDKPath):
 		with settings(warn_only=True):
-			with cd("%s/server/sdk/example_project/" % pathMedia):
+			with cd("%s/example_project/" % serverSDKPath):
 				if cmakeFind == "CMakeLists.txt":
 					cmake = sudo("cmake -H. -Bbuild")
 					sudo ("cmake --build build -- -j3")
 					if cmake.return_code == 0:
 						print "CMake succes"
-						make = sudo ("make %s/server/sdk/example_project/build/" % pathMedia)
+						make = sudo ("make %s/example_project/build/" % serverSDKPath)
 						if make.return_code == 0:
 							print "Make succes"
 						else:
@@ -160,31 +157,28 @@ def timeStampFolders(projectName,branch):
 					if checkout.return_code == 0:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 						try:
-							if os.path.exists("%s/server/source/" % pathMedia):
+							if os.path.exists("%s/" % serverSourcePath):
 								print "Source exiists"
 							else:
-								os.makedirs("%s/server/source/" % pathMedia)
-							put('%s' % timeStampPath[0], '%s/server/source/' % pathMedia, use_sudo = True)
+								os.makedirs("%s/" % serverSourcePath)
+							put('%s' % timeStampPath[0], '%s/' % serverSourcePath, use_sudo = True)
 							print "Succes at moving projects on server"
 							moveSDK(projectName)
 							unzip()
 							runCMake(projectName)
-							#rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/*
-							if os.listdir("%s/server/sdk/example_project/build" % pathMedia) != []:
+							if os.listdir("%s/example_project/build" % serverSDKPath) != []:
 								test = os.path.split(timeStampPath[0])
 								print "%s" % test[-1]
-								get('%s/server/sdk/example_project/build' % pathMedia, '%s/%s/binary/%s' %(pathMedia,projectName,test[-1]), use_sudo = True)
+								get('%s/example_project/build' % serverSDKPath, '%s/%s/binary/%s' %(pathMedia,projectName,test[-1]), use_sudo = True)
 						except:
 							print "Error at moving projects on server"
 							
 					else:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
-						#sendMailError()
 						print "Error at checkout"
 						raise SystemExit()
 			else:
 				sudo("echo '%s' >> %s" % (cloneSource,logFile))
-				#sendMailError()
 				print "Error at cloning"
 				raise SystemExit()
 

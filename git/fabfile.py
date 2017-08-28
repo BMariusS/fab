@@ -1,7 +1,6 @@
 #IMPORTS
 from fabric.api import *
 from fabric.network import disconnect_all
-#from pyunpack import Archive
 #from environment import fabfile
 import os.path
 
@@ -21,12 +20,8 @@ def checkMailCommand():
 	if mailCommand == "Not Found":
 		print "Command mail does not exist"
 		raise SystemExit()
-'''
-#Check python module
-def checkPyunpack():
-	pyunpackModule = run("python -c '"'import pyunpack'"' && echo '"'Found'"' || echo '"'Not Found'"'")
-	return pyunpackModule
-'''
+
+
 def sendMailSuccess():
 	checkMailCommand()
 	if os.path.exists("%s" % mailFile):
