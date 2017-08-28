@@ -12,6 +12,7 @@ logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 pathMedia="/media/marius"
 serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
+autoEnvPath = "/home/marius/script/fab/git/AutoEnv.sh"
 
 #rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/*
 	
@@ -167,9 +168,9 @@ def timeStampFolders(projectName,branch):
 							unzip()
 							runCMake(projectName)
 							if os.listdir("%s/example_project/build" % serverSDKPath) != []:
-								test = os.path.split(timeStampPath[0])
-								print "%s" % test[-1]
-								get('%s/example_project/build' % serverSDKPath, '%s/%s/binary/%s' %(pathMedia,projectName,test[-1]), use_sudo = True)
+								folderTimeStamp = os.path.split(timeStampPath[0])
+								print "%s" % folderTimeStamp[-1]
+								get('%s/example_project/build' % serverSDKPath, '%s/%s/binary/%s' %(pathMedia,projectName,folderTimeStamp[-1]), use_sudo = True)
 						except:
 							print "Error at moving projects on server"
 							
@@ -182,3 +183,47 @@ def timeStampFolders(projectName,branch):
 				print "Error at cloning"
 				raise SystemExit()
 
+
+
+@task
+def getLastBuild(projectName):
+	directoryTimeStamp=[]
+	for directory in os.listdir("%s/%s/binary/" % (pathMedia,projectName)):
+		directoryTimeStamp.append(directory)
+	directoryTimeStamp.sort()
+	try:
+		put('%s/%s/binary/%s/build/' % (pathMedia,projectName,directoryTimeStamp[-1]), '%s/%s/deploy/' % (pathMedia,projectName), use_sudo = True)
+	except:
+		print "Error at moving binary"
+
+@task
+def scriptCall():
+	with settings(warn_only=True):
+		scriptCall = sudo("%s/Practica/shellScript.sh" % script)
+		if scriptCall.return_code == 0:
+			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			sendMailSuccess()
+		else:
+			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			sendMailError()
+			print "Error at calling the script"
+			raise SystemExit()
+
+@task
+def scriptCall():
+	with settings(warn_only=True):
+		scriptCall = sudo("%s" % autoEnvPath)
+		if scriptCall.return_code == 0:
+			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			#sendMailSuccess()
+		else:
+			sudo("echo '%s' >> %s" % (scriptCall,logFile))
+			#sendMailError()
+			print "Error at calling the script"
+			raise SystemExit()
+
+@task
+def testing(projectName,branch):
+	timeStampFolders(projectName,branch)
+	getLastBuild(projectName)
+		
