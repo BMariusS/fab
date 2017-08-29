@@ -224,6 +224,9 @@ def scriptCall():
 
 @task
 def testing(projectName,branch):
+	if os.path.exists("%s" % logFile):
+		sudo("rm %s" % logFile)
+	sudo("touch %s" % logFile)
 	timeStampFolders(projectName,branch)
 	getLastBuild(projectName)
 		

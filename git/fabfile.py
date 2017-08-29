@@ -16,9 +16,9 @@ script = "/home/marius"
 
 #FUNCTIONS
 def checkMailCommand():
-	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
+	mailCommand = run ("type -P mil &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
 	if mailCommand == "Not Found":
-		print "Command mail does not exist"
+		sudo("echo 'Command mail does not exist' >> %s" % logFile)
 		raise SystemExit()
 
 
@@ -28,7 +28,7 @@ def sendMailSuccess():
 		mails = sudo("cat %s | tr '\n' ',' " % mailFile)
 		sudo("echo 'All steps from the script were executed with success' | mail -s 'Success' %s" % mails)
 	else:
-		print "Mail file doesn't exist"
+		sudo("echo 'Sending mail success failed' >> %s" % logFile)
 
 
 
@@ -40,11 +40,11 @@ def sendMailError():
 			if os.path.exists("%s" % logFile):
 				sudo("echo 'There was an error with the program' | mail -s 'Error' %s -A %s" % (mails,logFile))
 			else:
-				print "Error attaching file"
+				sudo("echo 'Error attaching file' >> %s" % logFile)
 		except:
-			print "Error sending mail"
+			sudo("echo 'Error sending mail' >> %s" % logFile)
 	else:
-		print "Mail file doesn't exist"
+		sudo("echo 'Mail file doesn't exist' >> %s" % logFile)
 
 
 
@@ -110,24 +110,14 @@ def scriptCall():
 			raise SystemExit()
 
 
-#Display logFile
-def displayLog():
-	try:
-		sudo("cat %s" % logFile)
-	except:
-		sendMailError()
-		abort("Error at displaying logFile")
-
-
-
-#@task
-#@parallel
-#def final(cloneParameter='fab',checkoutParameter='master'):
-	#connection()
-	#gitClone(cloneParameter)
-	#gitCheckout(checkoutParameter)
-	#scriptCall()
-	#disconnect_all()
-	#clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
-	#os.chdir("%s" % clonePath) #refresh the directory after removing the clone
-	#os.system("/bin/bash") #stay in the directory after executing the script
+@task
+@parallel
+def final(cloneParameter,checkoutParameter='master'):
+	connection()
+	gitClone(cloneParameter)
+	gitCheckout(checkoutParameter)
+	scriptCall()
+	disconnect_all()
+	clonePath = find('fabfile.py', '/home/marius/fab/%s' % cloneParameter)
+	os.chdir("%s" % clonePath) #refresh the directory after removing the clone
+	os.system("/bin/bash") #stay in the directory after executing the script
