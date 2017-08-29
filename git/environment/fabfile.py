@@ -31,9 +31,9 @@ def timeStamps(projectName):
 					sudo("echo -e '%s \n%s \n' >> %s" % (sourceTimeStamp, binaryTimeStamp, logFile))
 					return (sourceTimeStamp, binaryTimeStamp)
 				except:
-					print "Error at creating source and binary time stamp"
+					sudo("echo 'Error at creating source and binary time stamp' >> %s" % logFile)
 		except:
-			print "Error at creating source folder"
+			sudo("echo 'Error at creating source folder' >> %s" % logFile)
 	if os.path.exists("%s/%s/source" % (pathMedia,projectName)) and not os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
 		try:
 			binary = os.path.join("%s/%s/binary" % (pathMedia,projectName))
@@ -48,9 +48,9 @@ def timeStamps(projectName):
 					sudo("echo -e '%s \n%s \n' >> %s" % (sourceTimeStamp, binaryTimeStamp, logFile))
 					return (sourceTimeStamp, binaryTimeStamp)
 				except:
-					print "Error at creating source and binary time stamp"
+					sudo("echo 'Error at creating source and binary time stamp' >> %s" % logFile)
 		except:
-			print "Error at creating binary folder"
+			sudo("echo 'Error at creating binary folder' >> %s" % logFile)
 	if not os.path.exists("%s/%s/source" % (pathMedia,projectName)) and not os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
 		try:
 			source = os.path.join("%s/%s/source" % (pathMedia,projectName))
@@ -67,9 +67,9 @@ def timeStamps(projectName):
 					sudo("echo -e '%s \n%s \n' >> %s" % (sourceTimeStamp, binaryTimeStamp, logFile))
 					return (sourceTimeStamp, binaryTimeStamp)
 				except:
-					print "Error at creating source and binary time stamp"
+					sudo("echo 'Error at creating source and binary time stamp' >> %s" % logFile)
 		except:
-			print "Error at creating source and binary folders"
+			sudo("echo 'Error at creating source and binary folders' >> %s" % logFile)
 	if os.path.exists("%s/%s/source" % (pathMedia,projectName)) and os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
 		try:
 			sourceTimeStamp = os.path.join("%s/%s/source" % (pathMedia,projectName), datetime.now().strftime('%Y-%m-%d_%H:%M:%S'))
@@ -79,13 +79,13 @@ def timeStamps(projectName):
 			sudo("echo -e '%s \n%s \n' >> %s" % (sourceTimeStamp, binaryTimeStamp, logFile))
 			return (sourceTimeStamp, binaryTimeStamp)
 		except:
-			print "Error at creating source and binary time stamp"
+			sudo("echo 'Error at creating source and binary time stamp' >> %s" % logFile)
 		
 
 @task
 def prepareEnvironment(projectName):
 	if os.path.exists("%s/%s" % (pathMedia,projectName)):
-		print "This project already exists"
+		sudo("echo 'This project already exists' >> %s" % logFile)
 		raise SystemExit()
 	try:
 		build = os.path.join("%s/%s/build" % (pathMedia,projectName))
@@ -94,7 +94,7 @@ def prepareEnvironment(projectName):
 		os.makedirs(sdk)
 		sudo("echo -e '%s \n%s \n' >> %s" % (build, sdk, logFile))
 	except:
-		print "Error at creating build and sdk folders"
+		sudo("echo 'Error at creating build and sdk folders' >> %s" % logFile)
 
 
 @task	
@@ -103,10 +103,11 @@ def moveSDK(projectName):
 		if sdkArchive.endswith(".tar.gz"):
 			try:
 				put('%s/%s/sdk/%s' % (pathMedia,projectName,sdkArchive), '%s/' % serverSDKPath, use_sudo = True)
+				sudo("echo 'SDK moved with success' >> %s" % logFile)
 			except:
-				print "Error at moving on server"
+				sudo("echo 'Error at moving on server' >> %s" % logFile)
 		else:
-			print "Not a tar archive"
+			sudo("echo 'Not a tar archive' >> %s" % logFile)
 			raise SystemExit()
 
 
@@ -116,29 +117,30 @@ def unzip():
 		if serverArchive.endswith(".tar.gz"):
 			try:
 				tarfile.open('%s' % serverArchive).extractall('%s/' % serverSDKPath)
+				sudo("echo 'Archive unziped with success' >> %s" % logFile)
 			except:
-				print "Error at unziping"
+				sudo("echo 'Error at unziping' >> %s" % logFile)
 		else:
-			print "Error no archive"
+			sudo("echo 'Error no archive' >> %s" % logFile)
 			raise SystemExit()
 
 @task
-def runCMake(projectName):
+def runCMake():
 	for cmakeFind in os.listdir("%s/example_project" % serverSDKPath):
 		with settings(warn_only=True):
 			with cd("%s/example_project/" % serverSDKPath):
 				if cmakeFind == "CMakeLists.txt":
 					cmake = sudo("cmake -H. -Bbuild")
-					sudo ("cmake --build build -- -j3")
-					if cmake.return_code == 0:
-						print "CMake succes"
+					cmakeBuild = sudo ("cmake --build build -- -j3")
+					if cmake.return_code == 0 and cmakeBuild.return_code == 0:
+						sudo("echo 'CMake succes' >> %s" % logFile)
 						make = sudo ("make %s/example_project/build/" % serverSDKPath)
 						if make.return_code == 0:
-							print "Make succes"
+							sudo("echo 'Make succes' >> %s" % logFile)
 						else:
-							print "Error at make"
+							sudo("echo 'Error at make' >> %s" % logFile)
 					else:
-						print "Error at calling CMakeLists.txt"
+						sudo("echo 'Error at calling CMakeLists.txt' >> %s" % logFile)
 
 
 #Clone to the source time stamp folder
@@ -147,7 +149,7 @@ def timeStampFolders(projectName,branch):
 	try:
 		timeStampPath = timeStamps(projectName)
 	except:
-		print "error at creating environment"
+		sudo("echo 'Error at creating environment' >> %s" % logFile)
 	with settings(warn_only=True):
 		with cd("%s" % timeStampPath[0]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
@@ -159,20 +161,23 @@ def timeStampFolders(projectName,branch):
 						sudo("echo '%s' >> %s" % (checkout,logFile))
 						try:
 							if os.path.exists("%s/" % serverSourcePath):
-								print "Source exiists"
+								sudo("echo 'Source exists' >> %s" % logFile)
 							else:
 								os.makedirs("%s/" % serverSourcePath)
 							put('%s' % timeStampPath[0], '%s/' % serverSourcePath, use_sudo = True)
-							print "Succes at moving projects on server"
+							sudo("echo 'Succes at moving projects on server' >> %s" % logFile)
 							moveSDK(projectName)
 							unzip()
-							runCMake(projectName)
+							runCMake()
 							if os.listdir("%s/example_project/build" % serverSDKPath) != []:
 								folderTimeStamp = os.path.split(timeStampPath[0])
-								print "%s" % folderTimeStamp[-1]
-								get('%s/example_project/build' % serverSDKPath, '%s/%s/binary/%s' %(pathMedia,projectName,folderTimeStamp[-1]), use_sudo = True)
+								try:
+									get('%s/example_project/build' % serverSDKPath, '%s/%s/binary/%s' %(pathMedia,projectName,folderTimeStamp[-1]), use_sudo = True)
+									sudo("echo 'Succes at getting the files from server' >> %s" % logFile)
+								except:
+									sudo("echo 'Error at getting the files from server' >> %s" % logFile)
 						except:
-							print "Error at moving projects on server"
+							sudo("echo 'Error at moving projects on server' >> %s" % logFile)
 							
 					else:
 						sudo("echo '%s' >> %s" % (checkout,logFile))
@@ -193,21 +198,9 @@ def getLastBuild(projectName):
 	directoryTimeStamp.sort()
 	try:
 		put('%s/%s/binary/%s/build/' % (pathMedia,projectName,directoryTimeStamp[-1]), '%s/%s/deploy/' % (pathMedia,projectName), use_sudo = True)
+		sudo("echo 'Success at moving binaries' >> %s" % logFile)
 	except:
-		print "Error at moving binary"
-
-@task
-def scriptCall():
-	with settings(warn_only=True):
-		scriptCall = sudo("%s/Practica/shellScript.sh" % script)
-		if scriptCall.return_code == 0:
-			sudo("echo '%s' >> %s" % (scriptCall,logFile))
-			sendMailSuccess()
-		else:
-			sudo("echo '%s' >> %s" % (scriptCall,logFile))
-			sendMailError()
-			print "Error at calling the script"
-			raise SystemExit()
+		sudo("echo 'Error at moving binaries' >> %s" % logFile)
 
 @task
 def scriptCall():
@@ -215,10 +208,8 @@ def scriptCall():
 		scriptCall = sudo("%s" % autoEnvPath)
 		if scriptCall.return_code == 0:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
-			#sendMailSuccess()
 		else:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
-			#sendMailError()
 			print "Error at calling the script"
 			raise SystemExit()
 
@@ -229,4 +220,5 @@ def testing(projectName,branch):
 	sudo("touch %s" % logFile)
 	timeStampFolders(projectName,branch)
 	getLastBuild(projectName)
+	scriptCall()
 		
