@@ -147,10 +147,12 @@ def runCMake():
 #Clone to the source time stamp folder
 @task
 def timeStampFolders(projectName,branch):
+	global logFile
 	try:
 		timeStampPath = timeStamps(projectName)
 	except:
 		sudo("echo 'Error at creating environment' >> %s" % logFile)
+	logFile="%s/logFile.txt" % timeStampPath[0]
 	with settings(warn_only=True):
 		with cd("%s" % timeStampPath[0]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
@@ -166,6 +168,7 @@ def timeStampFolders(projectName,branch):
 							else:
 								os.makedirs("%s/" % serverSourcePath)
 							put('%s' % timeStampPath[0], '%s/' % serverSourcePath, use_sudo = True)
+							test = timeStampPath[0]
 							sudo("echo 'Succes at moving projects on server' >> %s" % logFile)
 							moveSDK(projectName)
 							unzip()
@@ -222,4 +225,3 @@ def testing(projectName,branch):
 	timeStampFolders(projectName,branch)
 	getLastBuild(projectName)
 	scriptCall()
-		
