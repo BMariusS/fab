@@ -14,7 +14,7 @@ serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
 autoEnvPath = "/home/marius/script/fab/git/AutoEnv.sh"
 
-#rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/*
+#rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/* /media/marius/test/deploy/*
 	
 def timeStamps(projectName):
 	if not os.path.exists("%s/%s/source" % (pathMedia,projectName)) and os.path.exists("%s/%s/binary" % (pathMedia,projectName)):
