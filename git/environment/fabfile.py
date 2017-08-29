@@ -5,9 +5,10 @@ import os
 import tarfile
 import glob
 
+#env.use_ssh_config = True
 env.hosts=["localhost"]
-env.user="marius"
-env.password="rootTest"
+#env.key_filename="~/.ssh/id_rsa"
+#env.port = 22
 logFile = "/home/marius/script/fab/git/environment/logFile.txt"
 pathMedia="/media/marius"
 serverSDKPath = "%s/server/sdk" % pathMedia

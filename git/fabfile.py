@@ -6,17 +6,18 @@ import os.path
 
  
 #VARIABILES
-path = '/home/marius/fab/'
+#env.use_ssh_config = True
 env.hosts=["localhost"]
-env.user="marius"
-env.password="rootTest"
+#env.key_filename="~/.ssh/id_rsa"
+#env.port = 22
+path = '/home/marius/fab'
 logFile="/home/marius/script/fab/git/logFile.txt"
 mailFile="/home/marius/script/fab/git/mails.txt"
 script = "/home/marius"
 
 #FUNCTIONS
 def checkMailCommand():
-	mailCommand = run ("type -P mil &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
+	mailCommand = run ("type -P mail &>/dev/null && echo '"'Found'"' || echo '"'Not Found'"'")
 	if mailCommand == "Not Found":
 		sudo("echo 'Command mail does not exist' >> %s" % logFile)
 		raise SystemExit()
@@ -58,12 +59,12 @@ def connection():
 #Clone for Method 0
 @task
 def gitClone(folder):
-	if os.path.exists("%s%s/" % (path,folder)):
+	if os.path.exists("%s/%s/" % (path,folder)):
 		sudo("echo 'Clone already exists' > %s" % logFile)
-		with cd("%s" % path):
+		with cd("%s/" % path):
 			sudo("rm -rf %s | echo 'Clone has been deleted' > %s" % (folder,logFile))
 	with settings(warn_only=True):
-		with cd("%s" % path):
+		with cd("%s/" % path):
 			clone = sudo("git clone https://github.com/BMariusS/fab.git")
 			if clone.return_code == 0:
 				sudo("echo '%s' > %s" % (clone,logFile))
