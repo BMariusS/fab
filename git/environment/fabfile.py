@@ -9,11 +9,12 @@ import glob
 env.hosts=["localhost"]
 #env.key_filename="~/.ssh/id_rsa"
 #env.port = 22
-logFile = "/home/marius/script/fab/git/environment/logFile.txt"
+logFile = "/home/marius/script/fab/git/environment/logFile"
 pathMedia="/media/marius"
 serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
 autoEnvPath = "/home/marius/script/fab/git/AutoEnv.sh"
+test = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
 
 #rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/* /media/marius/test/deploy/*
 	
@@ -152,7 +153,7 @@ def timeStampFolders(projectName,branch):
 		timeStampPath = timeStamps(projectName)
 	except:
 		sudo("echo 'Error at creating environment' >> %s" % logFile)
-	logFile="%s/logFile.txt" % timeStampPath[0]
+	logFile="%s/logFile" % timeStampPath[0]
 	with settings(warn_only=True):
 		with cd("%s" % timeStampPath[0]):
 			cloneSource = sudo("git clone https://github.com/BMariusS/fab.git")
@@ -209,7 +210,7 @@ def getLastBuild(projectName):
 @task
 def scriptCall():
 	with settings(warn_only=True):
-		scriptCall = sudo("%s" % autoEnvPath)
+		scriptCall = sudo("%s test" % autoEnvPath)
 		if scriptCall.return_code == 0:
 			sudo("echo '%s' >> %s" % (scriptCall,logFile))
 		else:
@@ -218,10 +219,27 @@ def scriptCall():
 			raise SystemExit()
 
 @task
-def testing(projectName,branch):
+@parallel
+def flash(array):
+	for key, value in test.iteritems():
+		if array == key:
+			for i in value:
+				try:
+					pid = os.fork()
+					if pid == 0:
+						scriptCall = sudo("%s %s" % (autoEnvPath, i))
+						sudo("echo '%s' >> %s%s" % (scriptCall, logFile, i))
+						return
+				except:
+					print "Error at flashing"
+
+@task
+@parallel
+def testing(projectName,branch,array):
 	if os.path.exists("%s" % logFile):
 		sudo("rm %s" % logFile)
 	sudo("touch %s" % logFile)
 	timeStampFolders(projectName,branch)
 	getLastBuild(projectName)
-	scriptCall()
+	#scriptCall()
+	flash(array)
