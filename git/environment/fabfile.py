@@ -1,6 +1,7 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
+from io import StringIO
 import os
 import tarfile
 import glob
@@ -237,6 +238,7 @@ sys.stdout = Logger()
 ''' 
 
 @task
+@parallel
 def flash(array):
 	for key, value in test.iteritems():
 		if array == key:
@@ -244,17 +246,20 @@ def flash(array):
 				try:
 					pid = os.fork()
 					if pid == 0:
-						autoEnvPathParameter = '%s %s' % (autoEnvPath, i)
+						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, i, i)
 						shellCommand = [autoEnvPathParameter]
-						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, 
-											 stderr=subprocess.PIPE, 
-											 stdin=subprocess.PIPE, 
-											 shell=True)
+						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, shell=True)
+						sys.stdout.flush()
 						openFile = open('%s%s' %(logFile, i), 'w')
-						for line in process.stdout:
-							sys.stdout.write(line)
+						for line in iter(process.stdout.readline, b''):
+							print(line.rstrip())
 							openFile.write(line)
-						process.wait()
+						#for line in process.stdout:
+							#sys.stdout.flush()
+							#sys.stdout.write(line)
+							#openFile.write(line)
+						#process.wait()
+						#os._exit(3)
 						return
 				except:
 					print "Error at flashing %s" % i
