@@ -15,7 +15,7 @@ logFile = "/home/marius/script/fab/git/environment/logFile"
 pathMedia="/media/marius"
 serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
-autoEnvPath = "/home/marius/script/fab/git/AutoEnv.sh"
+autoEnvPath = '/home/marius/script/fab/git/AutoEnv.sh'
 test = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
 i=''
 
@@ -220,38 +220,44 @@ def scriptCall():
 			print "Error at calling the script"
 			raise SystemExit()
 
+'''
 class Logger(object):
     def __init__(self):
         self.terminal = sys.stdout
-        self.log = open("%s%s" % (logFile,i), "a")
+        self.log = open("%s" % (logFile), "a")
 
     def write(self, message):
         self.terminal.write(message)
         self.log.write(message)  
 
     def flush(self):
-        pass    
+        pass
+
+sys.stdout = Logger()   
+''' 
 
 @task
 def flash(array):
-	global i
 	for key, value in test.iteritems():
 		if array == key:
-			for testare in value:
-					i=testare
-				#try:
+			for i in value:
+				try:
 					pid = os.fork()
-					#print "%s" % pid
 					if pid == 0:
-						subprocess.call("%s %s" % (autoEnvPath, i), shell=True)
-						sys.stdout = Logger(i)
-						#testing = subprocess.check_output("%s %s" % (autoEnvPath, i), shell=True)
-						#f = open('%s%s' % (logFile, i), 'w')
-						#f.write(testing)
-						#f.close()
+						autoEnvPathParameter = '%s %s' % (autoEnvPath, i)
+						shellCommand = [autoEnvPathParameter]
+						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, 
+											 stderr=subprocess.PIPE, 
+											 stdin=subprocess.PIPE, 
+											 shell=True)
+						openFile = open('%s%s' %(logFile, i), 'w')
+						for line in process.stdout:
+							sys.stdout.write(line)
+							openFile.write(line)
+						process.wait()
 						return
-				#except:
-					#print "Error at flashing %s" % i
+				except:
+					print "Error at flashing %s" % i
 
 @task
 @parallel
