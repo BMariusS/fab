@@ -7,6 +7,8 @@ import tarfile
 import glob
 import subprocess
 import sys
+import time
+#import threading
 
 #env.use_ssh_config = True
 env.hosts=["localhost"]
@@ -18,7 +20,7 @@ serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
 autoEnvPath = '/home/marius/script/fab/git/AutoEnv.sh'
 test = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
-i=''
+timeStart=time.time()
 
 #rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/* /media/marius/test/deploy/*
 	
@@ -237,32 +239,77 @@ class Logger(object):
 sys.stdout = Logger()   
 ''' 
 
+'''
+exitFlag = 0
+
+class myThread (threading.Thread):
+   def __init__(self, threadID, name, counter):
+      threading.Thread.__init__(self)
+      self.threadID = threadID
+      self.name = name
+      self.counter = counter
+   def run(self):
+      print "Starting " + self.name
+      print_time(self.name, self.counter, 5)
+      print "Exiting " + self.name
+
+def print_time(threadName, counter, delay):
+   while counter:
+      if exitFlag:
+         threadName.exit()
+      time.sleep(delay)
+      print "%s: %s" % (threadName, time.ctime(time.time()))
+      counter -= 1
+
+@task
+def testare():
+	# Create new threads
+	thread1 = myThread(1, "Thread-1", 1)
+	thread2 = myThread(2, "Thread-2", 2)
+
+	# Start new Threads
+	thread1.start()
+	thread2.start()
+
+
+@task
+def flashV2(array):
+	for key, value in test.iteritems():
+		if array == key:
+			for i in value:
+				try:
+					print "test"
+				except:
+					print "Error"
+'''
+
 @task
 @parallel
 def flash(array):
 	for key, value in test.iteritems():
 		if array == key:
 			for i in value:
-				try:
+				#try:
 					pid = os.fork()
 					if pid == 0:
 						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, i, i)
 						shellCommand = [autoEnvPathParameter]
-						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, shell=True)
-						sys.stdout.flush()
-						openFile = open('%s%s' %(logFile, i), 'w')
-						for line in iter(process.stdout.readline, b''):
-							print(line.rstrip())
-							openFile.write(line)
-						#for line in process.stdout:
-							#sys.stdout.flush()
-							#sys.stdout.write(line)
-							#openFile.write(line)
-						#process.wait()
-						#os._exit(3)
+						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+						while(process.poll() == None):
+							timeEnd=time.time()
+							difference = int(timeEnd - timeStart)
+							#print(difference)
+							minutes = difference // 60
+							print(minutes)
+							sys.stdout.flush()
+							openFile = open('%s%s' %(logFile, i), 'a')
+							for line in iter(process.stdout.readline, b''):
+								print(line.rstrip())
+								openFile.write(line)
+								break
 						return
-				except:
-					print "Error at flashing %s" % i
+				#except:
+					#print "Error at flashing %s" % i
 
 @task
 @parallel
