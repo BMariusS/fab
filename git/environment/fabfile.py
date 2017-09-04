@@ -290,36 +290,31 @@ def flash(array):
 	for key, value in test.iteritems():
 		if array == key:
 			for i in value:
-				#try:
+				try:
 					pid = os.fork()
-					#testing = pid
-					print "%d" % pid
 					if pid == 0:
 						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, i, i)
 						shellCommand = [autoEnvPathParameter]
-						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-						variable = True
-						while(variable):
+						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, preexec_fn=os.setsid)
+						while(process.poll() == None):
 							timeNow=time.time()
 							difference = int(timeNow - timeStart)
-							#print(difference)
 							minutes = difference // 60
-							seconds = difference % 60
-							print(seconds)
-							#print(minutes)
+							#seconds = difference % 60
+							print(minutes)
 							sys.stdout.flush()
 							openFile = open('%s%s' %(logFile, i), 'a')
+							allOpenFile = open('%s' % logFile, 'a')
 							for line in iter(process.stdout.readline, b''):
 								print(line.rstrip())
 								openFile.write(line)
+								allOpenFile.write(line)
 								break
-							if seconds >= 5 and i == 'A1':
-								variable = False
-								#testing = os.getpid()
-								#print "%s" % testing
-								os.killpg(testing, signal.SIGTERM)
-				#except:
-					#print "Error at flashing %s" % i
+							if minutes >= 30:
+								os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+						return
+				except:
+					print "Error at flashing %s" % i
 
 @task
 @parallel
