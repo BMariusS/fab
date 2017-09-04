@@ -294,8 +294,9 @@ def flash(array):
 								os.killpg(os.getpgid(process.pid), signal.SIGTERM)
 						return
 				except:
+					print("Error at flashing %s" % value)
 					allOpenFile = open('%s' % logFile, 'a')
-					openFile.write("Error at flashing %s" % value)
+					allOpenFile.write("Error at flashing %s \n" % value)
 
 @task
 @parallel
