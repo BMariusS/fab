@@ -3,7 +3,7 @@
 echo "hi" $1 $2
 ls -l
 echo $1
-secs=1800
+secs=15
 SECONDS=0
 while (( $SECONDS < $secs )); do
 	echo "test $SECONDS $1"

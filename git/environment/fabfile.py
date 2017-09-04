@@ -270,34 +270,32 @@ def flashV2(array):
 @task
 #@parallel
 def flash(array):
-	for key, value in flashDictionary.iteritems():
+	for key, values in flashDictionary.iteritems():
 		if array == key:
-			for i in value:
+			for value in values:
 				try:
 					pid = os.fork()
 					if pid == 0:
-						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, i, i)
+						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, value, value)
 						shellCommand = [autoEnvPathParameter]
 						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, preexec_fn=os.setsid)
 						while(process.poll() == None):
 							timeNow=time.time()
-							difference = int(timeNow - timeStart)
-							minutes = difference // 60
-							#seconds = difference % 60
-							print(minutes)
+							processEndTime = int(timeNow - timeStart)
 							sys.stdout.flush()
-							openFile = open('%s%s' %(logFile, i), 'a')
+							openFile = open('%s%s' %(logFile, value), 'a')
 							allOpenFile = open('%s' % logFile, 'a')
 							for line in iter(process.stdout.readline, b''):
 								print(line.rstrip())
 								openFile.write(line)
 								allOpenFile.write(line)
 								break
-							if minutes >= 30:
+							if processEndTime >= 3600:
 								os.killpg(os.getpgid(process.pid), signal.SIGTERM)
 						return
 				except:
-					print "Error at flashing %s" % i
+					allOpenFile = open('%s' % logFile, 'a')
+					openFile.write("Error at flashing %s" % value)
 
 @task
 @parallel
