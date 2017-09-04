@@ -1,7 +1,6 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 from datetime import datetime
-from io import StringIO
 import os
 import tarfile
 import glob
@@ -20,7 +19,7 @@ pathMedia="/media/marius"
 serverSDKPath = "%s/server/sdk" % pathMedia
 serverSourcePath = "%s/server/source" % pathMedia
 autoEnvPath = '/home/marius/script/fab/git/AutoEnv.sh'
-test = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
+flashDictionary = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
 timeStart=time.time()
 
 #rm -rf /media/marius/*/source/* /media/marius/server/sdk/* /media/marius/test/binary/* /media/marius/test/deploy/*
@@ -225,22 +224,6 @@ def scriptCall():
 			raise SystemExit()
 
 '''
-class Logger(object):
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = open("%s" % (logFile), "a")
-
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)  
-
-    def flush(self):
-        pass
-
-sys.stdout = Logger()   
-''' 
-
-'''
 exitFlag = 0
 
 class myThread (threading.Thread):
@@ -287,7 +270,7 @@ def flashV2(array):
 @task
 #@parallel
 def flash(array):
-	for key, value in test.iteritems():
+	for key, value in flashDictionary.iteritems():
 		if array == key:
 			for i in value:
 				try:
