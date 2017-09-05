@@ -12,10 +12,13 @@ timeStart=time.time()
 
 
 
+
 @task
 def flash(array):
+	keyCheck = False
 	for key, values in flashDictionary.iteritems():
 		if array == key or array == 'all':
+			keyCheck = True
 			for value in values:
 				try:
 					pid = os.fork()
@@ -41,6 +44,5 @@ def flash(array):
 					print("Error at flashing %s" % value)
 					allOpenFile = open('%s' % logFile, 'a')
 					allOpenFile.write("Error at flashing %s \n" % value)
-		else:
-			print("No such key")
-			break
+	if array != key and keyCheck == False:
+		print("Error no such key")
