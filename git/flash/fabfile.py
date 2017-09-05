@@ -5,8 +5,8 @@ import sys
 import time
 import signal
 
-logFile = "/home/marius/script/fab/git/flash/logFile"
-autoEnvPath = '/home/marius/script/fab/git/AutoEnv.sh'
+logFile = "/tmp/flashLog"
+autoEnvPath = './AutoEnv.sh'
 flashDictionary = {'A' : ['A1','A2','A3'], 'B' : ['B1','B2','B3','B4']}
 timeStart=time.time()
 
@@ -15,7 +15,7 @@ timeStart=time.time()
 @task
 def flash(array):
 	for key, values in flashDictionary.iteritems():
-		if array == key:
+		if array == key or array == 'all':
 			for value in values:
 				try:
 					pid = os.fork()
@@ -27,7 +27,7 @@ def flash(array):
 							timeNow=time.time()
 							processEndTime = int(timeNow - timeStart)
 							sys.stdout.flush()
-							openFile = open('%s%s' %(logFile, value), 'a')
+							openFile = open('%s%s.%s' %(logFile, key,value), 'a')
 							allOpenFile = open('%s' % logFile, 'a')
 							for line in iter(process.stdout.readline, b''):
 								print(line.rstrip())
@@ -41,4 +41,6 @@ def flash(array):
 					print("Error at flashing %s" % value)
 					allOpenFile = open('%s' % logFile, 'a')
 					allOpenFile.write("Error at flashing %s \n" % value)
-
+		else:
+			print("No such key")
+			break

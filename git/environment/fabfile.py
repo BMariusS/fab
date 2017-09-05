@@ -268,10 +268,9 @@ def flashV2(array):
 '''
 
 @task
-#@parallel
 def flash(array):
 	for key, values in flashDictionary.iteritems():
-		if array == key:
+		if array == key or array == 'all':
 			for value in values:
 				try:
 					pid = os.fork()
