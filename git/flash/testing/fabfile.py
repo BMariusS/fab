@@ -1,4 +1,5 @@
 from fabric.api import *
+from datetime import datetime
 import os
 import subprocess
 import sys
@@ -15,6 +16,10 @@ timeStart=time.time()
 
 @task
 def flash(array):
+	logTime = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+	allOpenFile = open('%s' % logFile, 'a')
+	allOpenFile.write("%s \n" % logTime)
+	allOpenFile.close()
 	keyCheck = False
 	for key, values in flashDictionary.iteritems():
 		if array == key or array == 'all':
@@ -26,6 +31,9 @@ def flash(array):
 						autoEnvPathParameter = '%s %s %s' % (autoEnvPath, value, value)
 						shellCommand = [autoEnvPathParameter]
 						process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, preexec_fn=os.setsid)
+						openFile = open('%s%s.%s' % (logFile, key, value), 'a')
+						openFile.write("%s \n" % logTime)
+						openFile.close()
 						while(process.poll() == None):
 							timeNow=time.time()
 							processEndTime = int(timeNow - timeStart)
