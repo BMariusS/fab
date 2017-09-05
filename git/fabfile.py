@@ -2,7 +2,7 @@
 from fabric.api import *
 from fabric.network import disconnect_all
 from environment.fabfile import *
-#from flash.fabfile import flash
+from flash.testing.fabfile import flash
 import os.path
 
  
