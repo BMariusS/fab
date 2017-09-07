@@ -20,7 +20,7 @@ def testing(folderParameter='all',parameterTG='all', parameterTC='all'):
 								for variables in TARGET.findall('variables'):
 									lista.append(variables.text)
 								variabile = ' '.join(str(i) for i in lista)
-								#print "%s %s" % (TARGET.get('id'),variabile)
-								sudo("echo '%s'" % variabile)
+								print "%s %s" % (TARGET.get('id'),variabile)
+								#sudo("echo '%s %s'" % (TARGET.get('id'),variabile))
 								lista=[]
 

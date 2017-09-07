@@ -5,6 +5,7 @@
 		<TG name="TG1_1">
 			<TC name="TC1_1_1">
 				<TARGET id="94">
+					<variables>192.168...</variables>
 					<variables>targets</variables>
 					<variables>/media/TC_1_1_1.sh</variables>
 					<variables>/media/ssd/</variables>
@@ -49,8 +50,8 @@
 		</TG>
 	</folder>
 	<folder name="Audio">
-		<TG name="TGAudio">
-			<TC name="TCAudio">
+		<TG name="TG1_1">
+			<TC name="TC1_1_1">
 				<TARGET id="102">
 					<variables>AUDIO</variables>
 				</TARGET>
