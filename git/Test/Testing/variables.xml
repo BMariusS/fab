@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<All>
+	<folder name="BSP">
+		<TG name="TG1_1">
+			<TC name="TC1_1_1">
+				<TARGET id="94">
+					<variables>targets</variables>
+					<variables>/media/TC_1_1_1.sh</variables>
+					<variables>/media/ssd/</variables>
+				</TARGET>
+				<TARGET id="95">
+					<variables>tc1.1.1 target95</variables>
+					<variables>tc1.1.1 target95</variables>
+				</TARGET>
+			</TC>
+			<TC name="TC1_1_2">
+				<TARGET id="96">
+					<variables>tc1.1.2 target96</variables>
+					<variables>tc1.1.2 target96</variables>
+				</TARGET>
+				<TARGET id="97">
+					<variables>tc1.1.2 target97</variables>
+					<variables>tc1.1.2 target97</variables>
+				</TARGET>
+			</TC>
+		</TG>
+		<TG name="TG1_2">
+			<TC name="TC1_2_1">
+				<TARGET id="98">
+					<variables>tc1.2.1 target98</variables>
+					<variables>tc1.2.1 target98</variables>
+				</TARGET>
+				<TARGET id="99">
+					<variables>tc1.2.1 target99</variables>
+					<variables>tc1.2.1 target99</variables>
+				</TARGET>
+			</TC>
+			<TC name="TC1_2_2">
+				<TARGET id="100">
+					<variables>tc1.2.2 target100</variables>
+					<variables>tc1.2.2 target100</variables>
+				</TARGET>
+				<TARGET id="101">
+					<variables>tc1.2.2 target101</variables>
+					<variables>tc1.2.2 target101</variables>
+				</TARGET>
+			</TC>
+		</TG>
+	</folder>
+	<folder name="Audio">
+		<TG name="TGAudio">
+			<TC name="TCAudio">
+				<TARGET id="102">
+					<variables>AUDIO</variables>
+				</TARGET>
+			</TC>
+		</TG>
+	</folder>
+</All>
