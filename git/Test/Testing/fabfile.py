@@ -15,7 +15,7 @@ timeStart=time.time()
 logFile = "/tmp/TestLog"
 
 @task
-def testing(folderParameter='all',parameterTG='all', parameterTC='all', parameterTarget='all'):
+def all(folderParameter='all',parameterTG='all', parameterTC='all', parameterTarget='all'):
 	variablesList=[]
 	logTime = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 	allOpenFile = open('%s' % logFile, 'a')
