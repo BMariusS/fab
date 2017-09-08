@@ -29,6 +29,9 @@ def testing(folderParameter='all',parameterTG='all', parameterTC='all', paramete
 				if nameTG == parameterTG or parameterTG == 'all':
 					for TC in TG.findall('TC'):
 						nameTC = TC.get('name')
+						openFile = open('%s.%s.%s' % (logFile,nameFolder,nameTC), 'a')
+						openFile.write("%s \n" % logTime)
+						openFile.close()
 						if nameTC == parameterTC or parameterTC == 'all':
 							for TARGET in TC.findall('TARGET'):
 								targetIP=TARGET.get('ip')
@@ -42,9 +45,6 @@ def testing(folderParameter='all',parameterTG='all', parameterTC='all', paramete
 											commandParameterConstruct = 'ssh %s %s' % (targetIP, xmlVariable)
 											shellCommand = [commandParameterConstruct]
 											process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, preexec_fn=os.setsid)
-											openFile = open('%s.%s.%s' % (logFile,nameFolder,nameTC), 'a')
-											openFile.write("%s \n" % logTime)
-											openFile.close()
 											while(process.poll() == None):
 												timeNow=time.time()
 												processEndTime = int(timeNow - timeStart)
