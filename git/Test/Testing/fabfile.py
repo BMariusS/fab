@@ -16,7 +16,7 @@ logFile = "/tmp/TestLog"
 
 @task
 def testing(folderParameter='all',parameterTG='all', parameterTC='all', parameterTarget='all'):
-	lista=[]
+	variablesList=[]
 	logTime = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 	allOpenFile = open('%s' % logFile, 'a')
 	allOpenFile.write("%s \n" % logTime)
@@ -34,12 +34,12 @@ def testing(folderParameter='all',parameterTG='all', parameterTC='all', paramete
 								targetIP=TARGET.get('ip')
 								if targetIP == parameterTarget or parameterTarget == 'all':
 									for variables in TARGET.findall('variables'):
-										lista.append(variables.text)
-									variabile = ' '.join(str(i) for i in lista)
+										variablesList.append(variables.text)
+									xmlVariable = ' '.join(str(i) for i in variablesList)
 									try:
 										pid=os.fork()
 										if pid == 0:
-											commandParameterConstruct = 'ssh %s %s' % (targetIP, variabile)
+											commandParameterConstruct = 'ssh %s %s' % (targetIP, xmlVariable)
 											shellCommand = [commandParameterConstruct]
 											process = subprocess.Popen(shellCommand, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, preexec_fn=os.setsid)
 											openFile = open('%s.%s.%s' % (logFile,nameFolder,nameTC), 'a')
