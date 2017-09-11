@@ -5,8 +5,8 @@ from os.path import basename
 
 env.hosts=["localhost"]
 
-
-def RQMVariables(scriptName,*environmentVariables):
+@task
+def TCRun(scriptName,*environmentVariables):
 	for script in glob.glob("*.sh"):
 		scriptWithoutExtension = os.path.splitext("%s" % script)[0]
 		if scriptName == scriptWithoutExtension:
