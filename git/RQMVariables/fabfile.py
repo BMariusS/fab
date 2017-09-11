@@ -13,3 +13,5 @@ def TCRun(scriptName,*environmentVariables):
 			callingScript = os.path.realpath(script)
 			scriptVariables = ' '.join(str(i) for i in environmentVariables)
 			sudo("%s %s" % (callingScript,scriptVariables))
+			
+			
